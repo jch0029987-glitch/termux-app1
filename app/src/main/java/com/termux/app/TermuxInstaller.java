@@ -58,8 +58,10 @@ import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR
  * (5.2) For every other zip entry, extract it into $STAGING_PREFIX and set execute permissions if necessary.
  */
 final class TermuxInstaller {
+        runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
 
     private static final String LOG_TAG = "TermuxInstaller";
+        runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
 
     /** Performs bootstrap setup if necessary. */
     static void setupBootstrapIfNeeded(final Activity activity, final Runnable whenDone) {
@@ -256,6 +258,7 @@ final class TermuxInstaller {
                         dialog.dismiss();
                         FileUtils.deleteFile("termux prefix directory", TERMUX_PREFIX_DIR_PATH, true);
                         TermuxInstaller.setupBootstrapIfNeeded(activity, whenDone);
+        runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
                     }).show();
             } catch (WindowManager.BadTokenException e1) {
                 // Activity already dismissed - ignore.
