@@ -18,13 +18,13 @@ import com.termux.shared.net.uri.UriUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.net.uri.UriScheme;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxConstants.TERMUX_APP;
-import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_SERVICE;
-import com.termux.app.TermuxService;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorConstants.TERMUX_APP;
+import com.termux.shared.termux.LinuxLatorConstants.TERMUX_APP.TERMUX_SERVICE;
+import com.termux.app.LinuxLatorService;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
-import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
+import com.termux.shared.termux.settings.properties.LinuxLatorAppSharedProperties;
+import com.termux.shared.termux.settings.properties.LinuxLatorPropertyConstants;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,9 +38,9 @@ import java.util.regex.Pattern;
 
 public class FileReceiverActivity extends AppCompatActivity {
 
-    static final String TERMUX_RECEIVEDIR = TermuxConstants.TERMUX_FILES_DIR_PATH + "/home/downloads";
-    static final String EDITOR_PROGRAM = TermuxConstants.TERMUX_HOME_DIR_PATH + "/bin/termux-file-editor";
-    static final String URL_OPENER_PROGRAM = TermuxConstants.TERMUX_HOME_DIR_PATH + "/bin/termux-url-opener";
+    static final String TERMUX_RECEIVEDIR = LinuxLatorConstants.TERMUX_FILES_DIR_PATH + "/home/downloads";
+    static final String EDITOR_PROGRAM = LinuxLatorConstants.TERMUX_HOME_DIR_PATH + "/bin/termux-file-editor";
+    static final String URL_OPENER_PROGRAM = LinuxLatorConstants.TERMUX_HOME_DIR_PATH + "/bin/termux-url-opener";
 
     /**
      * If the activity should be finished when the name input dialog is dismissed. This is disabled
@@ -50,7 +50,7 @@ public class FileReceiverActivity extends AppCompatActivity {
      */
     boolean mFinishOnDismissNameDialog = true;
 
-    private static final String API_TAG = TermuxConstants.TERMUX_APP_NAME + "FileReceiver";
+    private static final String API_TAG = LinuxLatorConstants.TERMUX_APP_NAME + "FileReceiver";
 
     private static final String LOG_TAG = "FileReceiverActivity";
 
@@ -179,7 +179,7 @@ public class FileReceiverActivity extends AppCompatActivity {
                 final Uri scriptUri = UriUtils.getFileUri(EDITOR_PROGRAM);
 
                 Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, scriptUri);
-                executeIntent.setClass(FileReceiverActivity.this, TermuxService.class);
+                executeIntent.setClass(FileReceiverActivity.this, LinuxLatorService.class);
                 executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{outFile.getAbsolutePath()});
                 startService(executeIntent);
                 finish();
@@ -189,7 +189,7 @@ public class FileReceiverActivity extends AppCompatActivity {
 
                 Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE);
                 executeIntent.putExtra(TERMUX_SERVICE.EXTRA_WORKDIR, TERMUX_RECEIVEDIR);
-                executeIntent.setClass(FileReceiverActivity.this, TermuxService.class);
+                executeIntent.setClass(FileReceiverActivity.this, LinuxLatorService.class);
                 startService(executeIntent);
                 finish();
             },
@@ -243,7 +243,7 @@ public class FileReceiverActivity extends AppCompatActivity {
         final Uri urlOpenerProgramUri = UriUtils.getFileUri(URL_OPENER_PROGRAM);
 
         Intent executeIntent = new Intent(TERMUX_SERVICE.ACTION_SERVICE_EXECUTE, urlOpenerProgramUri);
-        executeIntent.setClass(FileReceiverActivity.this, TermuxService.class);
+        executeIntent.setClass(FileReceiverActivity.this, LinuxLatorService.class);
         executeIntent.putExtra(TERMUX_SERVICE.EXTRA_ARGUMENTS, new String[]{url});
         startService(executeIntent);
         finish();
@@ -251,22 +251,22 @@ public class FileReceiverActivity extends AppCompatActivity {
 
     /**
      * Update {@link TERMUX_APP#FILE_SHARE_RECEIVER_ACTIVITY_CLASS_NAME} component state depending on
-     * {@link TermuxPropertyConstants#KEY_DISABLE_FILE_SHARE_RECEIVER} value and
+     * {@link LinuxLatorPropertyConstants#KEY_DISABLE_FILE_SHARE_RECEIVER} value and
      * {@link TERMUX_APP#FILE_VIEW_RECEIVER_ACTIVITY_CLASS_NAME} component state depending on
-     * {@link TermuxPropertyConstants#KEY_DISABLE_FILE_VIEW_RECEIVER} value.
+     * {@link LinuxLatorPropertyConstants#KEY_DISABLE_FILE_VIEW_RECEIVER} value.
      */
     public static void updateFileReceiverActivityComponentsState(@NonNull Context context) {
         new Thread() {
             @Override
             public void run() {
-                TermuxAppSharedProperties properties = TermuxAppSharedProperties.getProperties();
+                LinuxLatorAppSharedProperties properties = LinuxLatorAppSharedProperties.getProperties();
 
                 String errmsg;
                 boolean state;
 
                 state = !properties.isFileShareReceiverDisabled();
                 Logger.logVerbose(LOG_TAG, "Setting " + TERMUX_APP.FILE_SHARE_RECEIVER_ACTIVITY_CLASS_NAME + " component state to " + state);
-                errmsg = PackageUtils.setComponentState(context,TermuxConstants.TERMUX_PACKAGE_NAME,
+                errmsg = PackageUtils.setComponentState(context,LinuxLatorConstants.TERMUX_PACKAGE_NAME,
                     TERMUX_APP.FILE_SHARE_RECEIVER_ACTIVITY_CLASS_NAME,
                     state, null, false, false);
                 if (errmsg != null)
@@ -274,7 +274,7 @@ public class FileReceiverActivity extends AppCompatActivity {
 
                 state = !properties.isFileViewReceiverDisabled();
                 Logger.logVerbose(LOG_TAG, "Setting " + TERMUX_APP.FILE_VIEW_RECEIVER_ACTIVITY_CLASS_NAME + " component state to " + state);
-                errmsg = PackageUtils.setComponentState(context,TermuxConstants.TERMUX_PACKAGE_NAME,
+                errmsg = PackageUtils.setComponentState(context,LinuxLatorConstants.TERMUX_PACKAGE_NAME,
                     TERMUX_APP.FILE_VIEW_RECEIVER_ACTIVITY_CLASS_NAME,
                     state, null, false, false);
                 if (errmsg != null)

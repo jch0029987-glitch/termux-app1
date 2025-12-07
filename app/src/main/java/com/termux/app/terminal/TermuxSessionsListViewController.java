@@ -19,22 +19,22 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.termux.R;
-import com.termux.app.TermuxActivity;
-import com.termux.shared.termux.shell.command.runner.terminal.TermuxSession;
+import com.termux.app.LinuxLatorActivity;
+import com.termux.shared.termux.shell.command.runner.terminal.LinuxLatorSession;
 import com.termux.shared.theme.NightMode;
 import com.termux.shared.theme.ThemeUtils;
 import com.termux.terminal.TerminalSession;
 
 import java.util.List;
 
-public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class LinuxLatorSessionsListViewController extends ArrayAdapter<LinuxLatorSession> implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
-    final TermuxActivity mActivity;
+    final LinuxLatorActivity mActivity;
 
     final StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
     final StyleSpan italicSpan = new StyleSpan(Typeface.ITALIC);
 
-    public TermuxSessionsListViewController(TermuxActivity activity, List<TermuxSession> sessionList) {
+    public LinuxLatorSessionsListViewController(LinuxLatorActivity activity, List<LinuxLatorSession> sessionList) {
         super(activity.getApplicationContext(), R.layout.item_terminal_sessions_list, sessionList);
         this.mActivity = activity;
     }
@@ -94,15 +94,15 @@ public class TermuxSessionsListViewController extends ArrayAdapter<TermuxSession
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        TermuxSession clickedSession = getItem(position);
-        mActivity.getTermuxTerminalSessionClient().setCurrentSession(clickedSession.getTerminalSession());
+        LinuxLatorSession clickedSession = getItem(position);
+        mActivity.getLinuxLatorTerminalSessionClient().setCurrentSession(clickedSession.getTerminalSession());
         mActivity.getDrawer().closeDrawers();
     }
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        final TermuxSession selectedSession = getItem(position);
-        mActivity.getTermuxTerminalSessionClient().renameSession(selectedSession.getTerminalSession());
+        final LinuxLatorSession selectedSession = getItem(position);
+        mActivity.getLinuxLatorTerminalSessionClient().renameSession(selectedSession.getTerminalSession());
         return true;
     }
 

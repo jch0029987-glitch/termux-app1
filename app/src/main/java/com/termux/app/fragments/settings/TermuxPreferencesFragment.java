@@ -9,10 +9,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorAppSharedPreferences;
 
 @Keep
-public class TermuxPreferencesFragment extends PreferenceFragmentCompat {
+public class LinuxLatorPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -20,28 +20,28 @@ public class TermuxPreferencesFragment extends PreferenceFragmentCompat {
         if (context == null) return;
 
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setPreferenceDataStore(TermuxPreferencesDataStore.getInstance(context));
+        preferenceManager.setPreferenceDataStore(LinuxLatorPreferencesDataStore.getInstance(context));
 
         setPreferencesFromResource(R.xml.termux_preferences, rootKey);
     }
 
 }
 
-class TermuxPreferencesDataStore extends PreferenceDataStore {
+class LinuxLatorPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxAppSharedPreferences mPreferences;
+    private final LinuxLatorAppSharedPreferences mPreferences;
 
-    private static TermuxPreferencesDataStore mInstance;
+    private static LinuxLatorPreferencesDataStore mInstance;
 
-    private TermuxPreferencesDataStore(Context context) {
+    private LinuxLatorPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorAppSharedPreferences.build(context, true);
     }
 
-    public static synchronized TermuxPreferencesDataStore getInstance(Context context) {
+    public static synchronized LinuxLatorPreferencesDataStore getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new TermuxPreferencesDataStore(context);
+            mInstance = new LinuxLatorPreferencesDataStore(context);
         }
         return mInstance;
     }

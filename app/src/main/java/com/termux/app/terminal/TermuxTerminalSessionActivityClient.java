@@ -18,13 +18,13 @@ import androidx.annotation.Nullable;
 
 import com.termux.R;
 import com.termux.shared.interact.ShareUtils;
-import com.termux.shared.termux.shell.command.runner.terminal.TermuxSession;
+import com.termux.shared.termux.shell.command.runner.terminal.LinuxLatorSession;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
-import com.termux.app.TermuxActivity;
-import com.termux.shared.termux.terminal.TermuxTerminalSessionClientBase;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.app.TermuxService;
-import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
+import com.termux.app.LinuxLatorActivity;
+import com.termux.shared.termux.terminal.LinuxLatorTerminalSessionClientBase;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.app.LinuxLatorService;
+import com.termux.shared.termux.settings.properties.LinuxLatorPropertyConstants;
 import com.termux.shared.termux.terminal.io.BellHandler;
 import com.termux.shared.logger.Logger;
 import com.termux.terminal.TerminalColors;
@@ -38,9 +38,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /** The {@link TerminalSessionClient} implementation that may require an {@link Activity} for its interface methods. */
-public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionClientBase {
+public class LinuxLatorTerminalSessionActivityClient extends LinuxLatorTerminalSessionClientBase {
 
-    private final TermuxActivity mActivity;
+    private final LinuxLatorActivity mActivity;
 
     private static final int MAX_SESSIONS = 8;
 
@@ -48,9 +48,9 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     private int mBellSoundId;
 
-    private static final String LOG_TAG = "TermuxTerminalSessionActivityClient";
+    private static final String LOG_TAG = "LinuxLatorTerminalSessionActivityClient";
 
-    public TermuxTerminalSessionActivityClient(TermuxActivity activity) {
+    public LinuxLatorTerminalSessionActivityClient(LinuxLatorActivity activity) {
         this.mActivity = activity;
     }
 
@@ -69,7 +69,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
         // The service has connected, but data may have changed since we were last in the foreground.
         // Get the session stored in shared preferences stored by {@link #onStop} if its valid,
         // otherwise get the last session currently running.
-        if (mActivity.getTermuxService() != null) {
+        if (mActivity.getLinuxLatorService() != null) {
             setCurrentSession(getCurrentStoredSessionOrLast());
             termuxSessionListNotifyUpdated();
         }
@@ -137,7 +137,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     @Override
     public void onSessionFinished(@NonNull TerminalSession finishedSession) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
 
         if (service == null || service.wantsToStop()) {
             // The service wants to stop as soon as possible.
@@ -151,7 +151,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
         // and send the result back instead of waiting fo the user to press enter.
         // The plugin can handle/show errors itself.
         boolean isPluginExecutionCommandWithPendingResult = false;
-        TermuxSession termuxSession = service.getTermuxSession(index);
+        LinuxLatorSession termuxSession = service.getLinuxLatorSession(index);
         if (termuxSession != null) {
             isPluginExecutionCommandWithPendingResult = termuxSession.getExecutionCommand().isPluginExecutionCommandWithPendingResult();
             if (isPluginExecutionCommandWithPendingResult)
@@ -168,7 +168,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
         if (mActivity.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LEANBACK)) {
             // On Android TV devices we need to use older behaviour because we may
             // not be able to have multiple launcher icons.
-            if (service.getTermuxSessionsSize() > 1 || isPluginExecutionCommandWithPendingResult) {
+            if (service.getLinuxLatorSessionsSize() > 1 || isPluginExecutionCommandWithPendingResult) {
                 removeFinishedSession(finishedSession);
             }
         } else {
@@ -201,15 +201,15 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
         if (!mActivity.isVisible()) return;
 
         switch (mActivity.getProperties().getBellBehaviour()) {
-            case TermuxPropertyConstants.IVALUE_BELL_BEHAVIOUR_VIBRATE:
+            case LinuxLatorPropertyConstants.IVALUE_BELL_BEHAVIOUR_VIBRATE:
                 BellHandler.getInstance(mActivity).doBell();
                 break;
-            case TermuxPropertyConstants.IVALUE_BELL_BEHAVIOUR_BEEP:
+            case LinuxLatorPropertyConstants.IVALUE_BELL_BEHAVIOUR_BEEP:
                 loadBellSoundPool();
                 if (mBellSoundPool != null)
                     mBellSoundPool.play(mBellSoundId, 1.f, 1.f, 1, 0, 1.f);
                 break;
-            case TermuxPropertyConstants.IVALUE_BELL_BEHAVIOUR_IGNORE:
+            case LinuxLatorPropertyConstants.IVALUE_BELL_BEHAVIOUR_IGNORE:
                 // Ignore the bell character.
                 break;
         }
@@ -236,10 +236,10 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     @Override
     public void setTerminalShellPid(@NonNull TerminalSession terminalSession, int pid) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
         
-        TermuxSession termuxSession = service.getTermuxSessionForTerminalSession(terminalSession);
+        LinuxLatorSession termuxSession = service.getLinuxLatorSessionForTerminalSession(terminalSession);
         if (termuxSession != null)
             termuxSession.getExecutionCommand().mPid = pid;
     }
@@ -273,7 +273,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             try {
                 mBellSoundId = mBellSoundPool.load(mActivity, R.raw.bell, 1);
             } catch (Exception e){
-                // Catch java.lang.RuntimeException: Unable to resume activity {com.termux/com.termux.app.TermuxActivity}: android.content.res.Resources$NotFoundException: File res/raw/bell.ogg from drawable resource ID
+                // Catch java.lang.RuntimeException: Unable to resume activity {com.termux/com.termux.app.LinuxLatorActivity}: android.content.res.Resources$NotFoundException: File res/raw/bell.ogg from drawable resource ID
                 Logger.logStackTraceWithMessage(LOG_TAG, "Failed to load bell sound pool", e);
             }
         }
@@ -314,28 +314,28 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
     }
 
     public void switchToSession(boolean forward) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
 
         TerminalSession currentTerminalSession = mActivity.getCurrentSession();
         int index = service.getIndexOfSession(currentTerminalSession);
-        int size = service.getTermuxSessionsSize();
+        int size = service.getLinuxLatorSessionsSize();
         if (forward) {
             if (++index >= size) index = 0;
         } else {
             if (--index < 0) index = size - 1;
         }
 
-        TermuxSession termuxSession = service.getTermuxSession(index);
+        LinuxLatorSession termuxSession = service.getLinuxLatorSession(index);
         if (termuxSession != null)
             setCurrentSession(termuxSession.getTerminalSession());
     }
 
     public void switchToSession(int index) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
 
-        TermuxSession termuxSession = service.getTermuxSession(index);
+        LinuxLatorSession termuxSession = service.getLinuxLatorSession(index);
         if (termuxSession != null)
             setCurrentSession(termuxSession.getTerminalSession());
     }
@@ -353,19 +353,19 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
     private void renameSession(TerminalSession sessionToRename, String text) {
         if (sessionToRename == null) return;
         sessionToRename.mSessionName = text;
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service != null) {
-            TermuxSession termuxSession = service.getTermuxSessionForTerminalSession(sessionToRename);
+            LinuxLatorSession termuxSession = service.getLinuxLatorSessionForTerminalSession(sessionToRename);
             if (termuxSession != null)
                 termuxSession.getExecutionCommand().shellName = text;
         }
     }
 
     public void addNewSession(boolean isFailSafe, String sessionName) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
 
-        if (service.getTermuxSessionsSize() >= MAX_SESSIONS) {
+        if (service.getLinuxLatorSessionsSize() >= MAX_SESSIONS) {
             new AlertDialog.Builder(mActivity).setTitle(R.string.title_max_terminals_reached).setMessage(R.string.msg_max_terminals_reached)
                 .setPositiveButton(android.R.string.ok, null).show();
         } else {
@@ -378,10 +378,10 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
                 workingDirectory = currentSession.getCwd();
             }
 
-            TermuxSession newTermuxSession = service.createTermuxSession(null, null, null, workingDirectory, isFailSafe, sessionName);
-            if (newTermuxSession == null) return;
+            LinuxLatorSession newLinuxLatorSession = service.createLinuxLatorSession(null, null, null, workingDirectory, isFailSafe, sessionName);
+            if (newLinuxLatorSession == null) return;
 
-            TerminalSession newTerminalSession = newTermuxSession.getTerminalSession();
+            TerminalSession newTerminalSession = newLinuxLatorSession.getTerminalSession();
             setCurrentSession(newTerminalSession);
 
             mActivity.getDrawer().closeDrawers();
@@ -405,10 +405,10 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             return stored;
         } else {
             // Else return the last session currently running
-            TermuxService service = mActivity.getTermuxService();
+            LinuxLatorService service = mActivity.getLinuxLatorService();
             if (service == null) return null;
 
-            TermuxSession termuxSession = service.getLastTermuxSession();
+            LinuxLatorSession termuxSession = service.getLastLinuxLatorSession();
             if (termuxSession != null)
                 return termuxSession.getTerminalSession();
             else
@@ -424,7 +424,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             return null;
 
         // Check if the session handle found matches one of the currently running sessions
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return null;
 
         return service.getTerminalSessionForHandle(sessionHandle);
@@ -432,12 +432,12 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     public void removeFinishedSession(TerminalSession finishedSession) {
         // Return pressed with finished session - remove it.
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
 
-        int index = service.removeTermuxSession(finishedSession);
+        int index = service.removeLinuxLatorSession(finishedSession);
 
-        int size = service.getTermuxSessionsSize();
+        int size = service.getLinuxLatorSessionsSize();
         if (size == 0) {
             // There are no sessions to show, so finish the activity.
             mActivity.finishActivityIfNotFinishing();
@@ -445,7 +445,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
             if (index >= size) {
                 index = size - 1;
             }
-            TermuxSession termuxSession = service.getTermuxSession(index);
+            LinuxLatorSession termuxSession = service.getLinuxLatorSession(index);
             if (termuxSession != null)
                 setCurrentSession(termuxSession.getTerminalSession());
         }
@@ -457,7 +457,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     public void checkAndScrollToSession(TerminalSession session) {
         if (!mActivity.isVisible()) return;
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return;
 
         final int indexOfSession = service.getIndexOfSession(session);
@@ -472,7 +472,7 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
 
     String toToastTitle(TerminalSession session) {
-        TermuxService service = mActivity.getTermuxService();
+        LinuxLatorService service = mActivity.getLinuxLatorService();
         if (service == null) return null;
 
         final int indexOfSession = service.getIndexOfSession(session);
@@ -493,8 +493,8 @@ public class TermuxTerminalSessionActivityClient extends TermuxTerminalSessionCl
 
     public void checkForFontAndColors() {
         try {
-            File colorsFile = TermuxConstants.TERMUX_COLOR_PROPERTIES_FILE;
-            File fontFile = TermuxConstants.TERMUX_FONT_FILE;
+            File colorsFile = LinuxLatorConstants.TERMUX_COLOR_PROPERTIES_FILE;
+            File fontFile = LinuxLatorConstants.TERMUX_FONT_FILE;
 
             final Properties props = new Properties();
             if (colorsFile.isFile()) {

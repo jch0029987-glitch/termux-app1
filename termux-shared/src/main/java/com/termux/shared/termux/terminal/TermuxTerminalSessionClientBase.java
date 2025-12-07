@@ -7,9 +7,9 @@ import com.termux.shared.logger.Logger;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
 
-public class TermuxTerminalSessionClientBase implements TerminalSessionClient {
+public class LinuxLatorTerminalSessionClientBase implements TerminalSessionClient {
 
-    public TermuxTerminalSessionClientBase() {
+    public LinuxLatorTerminalSessionClientBase() {
     }
 
     @Override

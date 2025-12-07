@@ -1,6 +1,6 @@
 package com.termux.shared.termux.file;
 
-import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH;
+import static com.termux.shared.termux.LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH;
 
 import android.content.Context;
 import android.os.Environment;
@@ -13,20 +13,20 @@ import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.shell.command.ExecutionCommand;
 import com.termux.shared.errors.Error;
 import com.termux.shared.file.FileUtilsErrno;
-import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
+import com.termux.shared.termux.shell.command.environment.LinuxLatorShellEnvironment;
 import com.termux.shared.shell.command.runner.app.AppShell;
 import com.termux.shared.android.AndroidUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class TermuxFileUtils {
+public class LinuxLatorFileUtils {
 
-    private static final String LOG_TAG = "TermuxFileUtils";
+    private static final String LOG_TAG = "LinuxLatorFileUtils";
 
     /**
      * Replace "$PREFIX/" or "~/" prefix with termux absolute paths.
@@ -34,12 +34,12 @@ public class TermuxFileUtils {
      * @param paths The {@code paths} to expand.
      * @return Returns the {@code expand paths}.
      */
-    public static List<String> getExpandedTermuxPaths(List<String> paths) {
+    public static List<String> getExpandedLinuxLatorPaths(List<String> paths) {
         if (paths == null) return null;
         List<String> expandedPaths = new ArrayList<>();
 
         for (int i = 0; i < paths.size(); i++) {
-            expandedPaths.add(getExpandedTermuxPath(paths.get(i)));
+            expandedPaths.add(getExpandedLinuxLatorPath(paths.get(i)));
         }
 
         return expandedPaths;
@@ -51,12 +51,12 @@ public class TermuxFileUtils {
      * @param path The {@code path} to expand.
      * @return Returns the {@code expand path}.
      */
-    public static String getExpandedTermuxPath(String path) {
+    public static String getExpandedLinuxLatorPath(String path) {
         if (path != null && !path.isEmpty()) {
-            path = path.replaceAll("^\\$PREFIX$", TermuxConstants.TERMUX_PREFIX_DIR_PATH);
-            path = path.replaceAll("^\\$PREFIX/", TermuxConstants.TERMUX_PREFIX_DIR_PATH + "/");
-            path = path.replaceAll("^~/$", TermuxConstants.TERMUX_HOME_DIR_PATH);
-            path = path.replaceAll("^~/", TermuxConstants.TERMUX_HOME_DIR_PATH + "/");
+            path = path.replaceAll("^\\$PREFIX$", LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH);
+            path = path.replaceAll("^\\$PREFIX/", LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH + "/");
+            path = path.replaceAll("^~/$", LinuxLatorConstants.TERMUX_HOME_DIR_PATH);
+            path = path.replaceAll("^~/", LinuxLatorConstants.TERMUX_HOME_DIR_PATH + "/");
         }
 
         return path;
@@ -68,12 +68,12 @@ public class TermuxFileUtils {
      * @param paths The {@code paths} to unexpand.
      * @return Returns the {@code unexpand paths}.
      */
-    public static List<String> getUnExpandedTermuxPaths(List<String> paths) {
+    public static List<String> getUnExpandedLinuxLatorPaths(List<String> paths) {
         if (paths == null) return null;
         List<String> unExpandedPaths = new ArrayList<>();
 
         for (int i = 0; i < paths.size(); i++) {
-            unExpandedPaths.add(getUnExpandedTermuxPath(paths.get(i)));
+            unExpandedPaths.add(getUnExpandedLinuxLatorPath(paths.get(i)));
         }
 
         return unExpandedPaths;
@@ -85,10 +85,10 @@ public class TermuxFileUtils {
      * @param path The {@code path} to unexpand.
      * @return Returns the {@code unexpand path}.
      */
-    public static String getUnExpandedTermuxPath(String path) {
+    public static String getUnExpandedLinuxLatorPath(String path) {
         if (path != null && !path.isEmpty()) {
-            path = path.replaceAll("^" + Pattern.quote(TermuxConstants.TERMUX_PREFIX_DIR_PATH) + "/", "\\$PREFIX/");
-            path = path.replaceAll("^" + Pattern.quote(TermuxConstants.TERMUX_HOME_DIR_PATH) + "/", "~/");
+            path = path.replaceAll("^" + Pattern.quote(LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH) + "/", "\\$PREFIX/");
+            path = path.replaceAll("^" + Pattern.quote(LinuxLatorConstants.TERMUX_HOME_DIR_PATH) + "/", "~/");
         }
 
         return path;
@@ -103,7 +103,7 @@ public class TermuxFileUtils {
      *                                 be prefixed with "/". The call to {@link File#getCanonicalPath()}
      *                                 will automatically do this anyways.
      * @param expandPath The {@code boolean} that decides if input path is first attempted to be expanded by calling
-     *                   {@link TermuxFileUtils#getExpandedTermuxPath(String)} before its passed to
+     *                   {@link LinuxLatorFileUtils#getExpandedLinuxLatorPath(String)} before its passed to
      *                   {@link FileUtils#getCanonicalPath(String, String)}.
 
      * @return Returns the {@code canonical path}.
@@ -112,7 +112,7 @@ public class TermuxFileUtils {
         if (path == null) path = "";
 
         if (expandPath)
-            path = getExpandedTermuxPath(path);
+            path = getExpandedLinuxLatorPath(path);
 
         return FileUtils.getCanonicalPath(path, prefixForNonAbsolutePath);
     }
@@ -122,19 +122,19 @@ public class TermuxFileUtils {
      * allowed parent path is returned.
      *
      * @param path The {@code path} to check.
-     * @return Returns the allowed path if it {@code path} is under it, otherwise {@link TermuxConstants#TERMUX_FILES_DIR_PATH}.
+     * @return Returns the allowed path if it {@code path} is under it, otherwise {@link LinuxLatorConstants#TERMUX_FILES_DIR_PATH}.
      */
-    public static String getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(String path) {
-        if (path == null || path.isEmpty()) return TermuxConstants.TERMUX_FILES_DIR_PATH;
+    public static String getMatchedAllowedLinuxLatorWorkingDirectoryParentPathForPath(String path) {
+        if (path == null || path.isEmpty()) return LinuxLatorConstants.TERMUX_FILES_DIR_PATH;
 
-        if (path.startsWith(TermuxConstants.TERMUX_STORAGE_HOME_DIR_PATH + "/")) {
-            return TermuxConstants.TERMUX_STORAGE_HOME_DIR_PATH;
+        if (path.startsWith(LinuxLatorConstants.TERMUX_STORAGE_HOME_DIR_PATH + "/")) {
+            return LinuxLatorConstants.TERMUX_STORAGE_HOME_DIR_PATH;
         } if (path.startsWith(Environment.getExternalStorageDirectory().getAbsolutePath() + "/")) {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         } else if (path.startsWith("/sdcard/")) {
             return "/sdcard";
         } else {
-            return TermuxConstants.TERMUX_FILES_DIR_PATH;
+            return LinuxLatorConstants.TERMUX_FILES_DIR_PATH;
         }
     }
 
@@ -143,7 +143,7 @@ public class TermuxFileUtils {
      * termux app.
      *
      * The creation of missing directory and setting of missing permissions will only be done if
-     * {@code path} is under paths returned by {@link #getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(String)}.
+     * {@code path} is under paths returned by {@link #getMatchedAllowedLinuxLatorWorkingDirectoryParentPathForPath(String)}.
      *
      * The permissions set to directory will be {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS}.
      *
@@ -168,17 +168,17 @@ public class TermuxFileUtils {
                                                                      final boolean setPermissions, final boolean setMissingPermissionsOnly,
                                                                      final boolean ignoreErrorsIfPathIsInParentDirPath, final boolean ignoreIfNotExecutable) {
         return FileUtils.validateDirectoryFileExistenceAndPermissions(label, filePath,
-            TermuxFileUtils.getMatchedAllowedTermuxWorkingDirectoryParentPathForPath(filePath), createDirectoryIfMissing,
+            LinuxLatorFileUtils.getMatchedAllowedLinuxLatorWorkingDirectoryParentPathForPath(filePath), createDirectoryIfMissing,
             FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setPermissions, setMissingPermissionsOnly,
             ignoreErrorsIfPathIsInParentDirPath, ignoreIfNotExecutable);
     }
 
     /**
-     * Validate if {@link TermuxConstants#TERMUX_FILES_DIR_PATH} exists and has
+     * Validate if {@link LinuxLatorConstants#TERMUX_FILES_DIR_PATH} exists and has
      * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions.
      *
      * This is required because binaries compiled for termux are hard coded with
-     * {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} and the path must be accessible.
+     * {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} and the path must be accessible.
      *
      * The permissions set to directory will be {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS}.
      *
@@ -192,9 +192,9 @@ public class TermuxFileUtils {
      *
      * Note that the path returned by {@link Context#getFilesDir()} may
      * be under `/data/user/[id]/[package_name]` instead of `/data/data/[package_name]`
-     * defined by default by {@link TermuxConstants#TERMUX_FILES_DIR_PATH} where id will be 0 for
+     * defined by default by {@link LinuxLatorConstants#TERMUX_FILES_DIR_PATH} where id will be 0 for
      * primary user and a higher number for other users/profiles. If app is running under work profile
-     * or secondary user, then {@link TermuxConstants#TERMUX_FILES_DIR_PATH} will not be accessible
+     * or secondary user, then {@link LinuxLatorConstants#TERMUX_FILES_DIR_PATH} will not be accessible
      * and will not be automatically created, unless there is a bind mount from `/data/data` to
      * `/data/user/[id]`, ideally in the right namespace.
      * https://source.android.com/devices/tech/admin/multi-user
@@ -254,27 +254,27 @@ public class TermuxFileUtils {
      * @return Returns the {@code error} if path is not a directory file, failed to create it,
      * or validating permissions failed, otherwise {@code null}.
      */
-    public static Error isTermuxFilesDirectoryAccessible(@NonNull final Context context, boolean createDirectoryIfMissing, boolean setMissingPermissions) {
+    public static Error isLinuxLatorFilesDirectoryAccessible(@NonNull final Context context, boolean createDirectoryIfMissing, boolean setMissingPermissions) {
         if (createDirectoryIfMissing)
             context.getFilesDir();
 
-        if (!FileUtils.directoryFileExists(TermuxConstants.TERMUX_FILES_DIR_PATH, true))
-            return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH);
+        if (!FileUtils.directoryFileExists(LinuxLatorConstants.TERMUX_FILES_DIR_PATH, true))
+            return FileUtilsErrno.ERRNO_FILE_NOT_FOUND_AT_PATH.getError("termux files directory", LinuxLatorConstants.TERMUX_FILES_DIR_PATH);
 
         if (setMissingPermissions)
-            FileUtils.setMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH,
+            FileUtils.setMissingFilePermissions("termux files directory", LinuxLatorConstants.TERMUX_FILES_DIR_PATH,
                 FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS);
 
-        return FileUtils.checkMissingFilePermissions("termux files directory", TermuxConstants.TERMUX_FILES_DIR_PATH,
+        return FileUtils.checkMissingFilePermissions("termux files directory", LinuxLatorConstants.TERMUX_FILES_DIR_PATH,
             FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, false);
     }
 
     /**
-     * Validate if {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} exists and has
+     * Validate if {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} exists and has
      * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions.
      * .
      *
-     * The {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} directory would not exist if termux has
+     * The {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} directory would not exist if termux has
      * not been installed or the bootstrap setup has not been run or if it was deleted by the user.
      *
      * @param createDirectoryIfMissing The {@code boolean} that decides if directory file
@@ -284,15 +284,15 @@ public class TermuxFileUtils {
      * @return Returns the {@code error} if path is not a directory file, failed to create it,
      * or validating permissions failed, otherwise {@code null}.
      */
-    public static Error isTermuxPrefixDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-           return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix directory", TermuxConstants.TERMUX_PREFIX_DIR_PATH,
+    public static Error isLinuxLatorPrefixDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
+           return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix directory", LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH,
                 null, createDirectoryIfMissing,
                 FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
                 false, false);
     }
 
     /**
-     * Validate if {@link TermuxConstants#TERMUX_STAGING_PREFIX_DIR_PATH} exists and has
+     * Validate if {@link LinuxLatorConstants#TERMUX_STAGING_PREFIX_DIR_PATH} exists and has
      * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions.
      *
      * @param createDirectoryIfMissing The {@code boolean} that decides if directory file
@@ -302,15 +302,15 @@ public class TermuxFileUtils {
      * @return Returns the {@code error} if path is not a directory file, failed to create it,
      * or validating permissions failed, otherwise {@code null}.
      */
-    public static Error isTermuxPrefixStagingDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-        return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix staging directory", TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH,
+    public static Error isLinuxLatorPrefixStagingDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
+        return FileUtils.validateDirectoryFileExistenceAndPermissions("termux prefix staging directory", LinuxLatorConstants.TERMUX_STAGING_PREFIX_DIR_PATH,
             null, createDirectoryIfMissing,
             FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
             false, false);
     }
 
     /**
-     * Validate if {@link TermuxConstants.TERMUX_APP#APPS_DIR_PATH} exists and has
+     * Validate if {@link LinuxLatorConstants.TERMUX_APP#APPS_DIR_PATH} exists and has
      * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions.
      *
      * @param createDirectoryIfMissing The {@code boolean} that decides if directory file
@@ -320,20 +320,20 @@ public class TermuxFileUtils {
      * @return Returns the {@code error} if path is not a directory file, failed to create it,
      * or validating permissions failed, otherwise {@code null}.
      */
-    public static Error isAppsTermuxAppDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
-        return FileUtils.validateDirectoryFileExistenceAndPermissions("apps/termux-app directory", TermuxConstants.TERMUX_APP.APPS_DIR_PATH,
+    public static Error isAppsLinuxLatorAppDirectoryAccessible(boolean createDirectoryIfMissing, boolean setMissingPermissions) {
+        return FileUtils.validateDirectoryFileExistenceAndPermissions("apps/termux-app directory", LinuxLatorConstants.TERMUX_APP.APPS_DIR_PATH,
             null, createDirectoryIfMissing,
             FileUtils.APP_WORKING_DIRECTORY_PERMISSIONS, setMissingPermissions, true,
             false, false);
     }
 
     /**
-     * If {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} doesn't exist, is empty or only contains
-     * files in {@link TermuxConstants#TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY}.
+     * If {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} doesn't exist, is empty or only contains
+     * files in {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY}.
      */
-    public static boolean isTermuxPrefixDirectoryEmpty() {
+    public static boolean isLinuxLatorPrefixDirectoryEmpty() {
         Error error = FileUtils.validateDirectoryFileEmptyOrOnlyContainsSpecificFiles("termux prefix",
-            TERMUX_PREFIX_DIR_PATH, TermuxConstants.TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY, true);
+            TERMUX_PREFIX_DIR_PATH, LinuxLatorConstants.TERMUX_PREFIX_DIR_IGNORED_SUB_FILES_PATHS_TO_CONSIDER_AS_EMPTY, true);
         if (error == null)
             return true;
 
@@ -343,13 +343,13 @@ public class TermuxFileUtils {
     }
 
     /**
-     * Get a markdown {@link String} for stat output for various Termux app files paths.
+     * Get a markdown {@link String} for stat output for various LinuxLator app files paths.
      *
      * @param context The context for operations.
      * @return Returns the markdown {@link String}.
      */
-    public static String getTermuxFilesStatMarkdownString(@NonNull final Context context) {
-        Context termuxPackageContext = TermuxUtils.getTermuxPackageContext(context);
+    public static String getLinuxLatorFilesStatMarkdownString(@NonNull final Context context) {
+        Context termuxPackageContext = LinuxLatorUtils.getLinuxLatorPackageContext(context);
         if (termuxPackageContext == null) return null;
 
         // Also ensures that termux files directory is created if it does not already exist
@@ -362,16 +362,16 @@ public class TermuxFileUtils {
             .append("/system/bin/ls -lhdZ")
             .append(" '/data/data'")
             .append(" '/data/user/0'")
-            .append(" '" + TermuxConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH + "'")
-            .append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "'")
-            .append(" '" + TermuxConstants.TERMUX_FILES_DIR_PATH + "'")
+            .append(" '" + LinuxLatorConstants.TERMUX_INTERNAL_PRIVATE_APP_DATA_DIR_PATH + "'")
+            .append(" '/data/user/0/" + LinuxLatorConstants.TERMUX_PACKAGE_NAME + "'")
+            .append(" '" + LinuxLatorConstants.TERMUX_FILES_DIR_PATH + "'")
             .append(" '" + filesDir + "'")
-            .append(" '/data/user/0/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'")
-            .append(" '/data/user/" + TermuxConstants.TERMUX_PACKAGE_NAME + "/files'")
-            .append(" '" + TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_PREFIX_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_HOME_DIR_PATH + "'")
-            .append(" '" + TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/login'")
+            .append(" '/data/user/0/" + LinuxLatorConstants.TERMUX_PACKAGE_NAME + "/files'")
+            .append(" '/data/user/" + LinuxLatorConstants.TERMUX_PACKAGE_NAME + "/files'")
+            .append(" '" + LinuxLatorConstants.TERMUX_STAGING_PREFIX_DIR_PATH + "'")
+            .append(" '" + LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH + "'")
+            .append(" '" + LinuxLatorConstants.TERMUX_HOME_DIR_PATH + "'")
+            .append(" '" + LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/login'")
             .append(" 2>&1")
             .append("\necho; echo 'mount info:'\n")
             .append("/system/bin/grep -E '( /data )|( /data/data )|( /data/user/[0-9]+ )' /proc/self/mountinfo 2>&1 | /system/bin/grep -v '/data_mirror' 2>&1");
@@ -379,9 +379,9 @@ public class TermuxFileUtils {
         // Run script
         ExecutionCommand executionCommand = new ExecutionCommand(-1, "/system/bin/sh", null,
             statScript.toString() + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
-        executionCommand.commandLabel = TermuxConstants.TERMUX_APP_NAME + " Files Stat Command";
+        executionCommand.commandLabel = LinuxLatorConstants.TERMUX_APP_NAME + " Files Stat Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
-        AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironment(), null, true);
+        AppShell appShell = AppShell.execute(context, executionCommand, null, new LinuxLatorShellEnvironment(), null, true);
         if (appShell == null || !executionCommand.isSuccessful()) {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
@@ -402,8 +402,8 @@ public class TermuxFileUtils {
 
         // Build markdown output
         StringBuilder markdownString = new StringBuilder();
-        markdownString.append("## ").append(TermuxConstants.TERMUX_APP_NAME).append(" Files Info\n\n");
-        AndroidUtils.appendPropertyToMarkdown(markdownString,"TERMUX_REQUIRED_FILES_DIR_PATH ($PREFIX)", TermuxConstants.TERMUX_FILES_DIR_PATH);
+        markdownString.append("## ").append(LinuxLatorConstants.TERMUX_APP_NAME).append(" Files Info\n\n");
+        AndroidUtils.appendPropertyToMarkdown(markdownString,"TERMUX_REQUIRED_FILES_DIR_PATH ($PREFIX)", LinuxLatorConstants.TERMUX_FILES_DIR_PATH);
         AndroidUtils.appendPropertyToMarkdown(markdownString,"ANDROID_ASSIGNED_FILES_DIR_PATH", filesDir);
         markdownString.append("\n\n").append(MarkdownUtils.getMarkdownCodeForString(statOutput.toString(), true));
         markdownString.append("\n##\n");

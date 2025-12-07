@@ -9,7 +9,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorAppSharedPreferences;
 
 @Keep
 public class TerminalViewPreferencesFragment extends PreferenceFragmentCompat {
@@ -30,13 +30,13 @@ public class TerminalViewPreferencesFragment extends PreferenceFragmentCompat {
 class TerminalViewPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxAppSharedPreferences mPreferences;
+    private final LinuxLatorAppSharedPreferences mPreferences;
 
     private static TerminalViewPreferencesDataStore mInstance;
 
     private TerminalViewPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorAppSharedPreferences.build(context, true);
     }
 
     public static synchronized TerminalViewPreferencesDataStore getInstance(Context context) {

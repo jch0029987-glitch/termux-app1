@@ -9,53 +9,53 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
 import com.termux.shared.settings.preferences.SharedPreferenceUtils;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.preferences.TermuxPreferenceConstants.TERMUX_API_APP;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.settings.preferences.LinuxLatorPreferenceConstants.TERMUX_API_APP;
+import com.termux.shared.termux.LinuxLatorConstants;
 
-public class TermuxAPIAppSharedPreferences extends AppSharedPreferences {
+public class LinuxLatorAPIAppSharedPreferences extends AppSharedPreferences {
 
-    private static final String LOG_TAG = "TermuxAPIAppSharedPreferences";
+    private static final String LOG_TAG = "LinuxLatorAPIAppSharedPreferences";
 
-    private TermuxAPIAppSharedPreferences(@NonNull Context context) {
+    private LinuxLatorAPIAppSharedPreferences(@NonNull Context context) {
         super(context,
             SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
+                LinuxLatorConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
             SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+                LinuxLatorConstants.TERMUX_API_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
-     * Get {@link TermuxAPIAppSharedPreferences}.
+     * Get {@link LinuxLatorAPIAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_API_PACKAGE_NAME}.
-     * @return Returns the {@link TermuxAPIAppSharedPreferences}. This will {@code null} if an exception is raised.
+     *                {@link LinuxLatorConstants#TERMUX_API_PACKAGE_NAME}.
+     * @return Returns the {@link LinuxLatorAPIAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
     @Nullable
-    public static TermuxAPIAppSharedPreferences build(@NonNull final Context context) {
-        Context termuxAPIPackageContext = PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_API_PACKAGE_NAME);
+    public static LinuxLatorAPIAppSharedPreferences build(@NonNull final Context context) {
+        Context termuxAPIPackageContext = PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_API_PACKAGE_NAME);
         if (termuxAPIPackageContext == null)
             return null;
         else
-            return new TermuxAPIAppSharedPreferences(termuxAPIPackageContext);
+            return new LinuxLatorAPIAppSharedPreferences(termuxAPIPackageContext);
     }
 
     /**
-     * Get {@link TermuxAPIAppSharedPreferences}.
+     * Get {@link LinuxLatorAPIAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_API_PACKAGE_NAME}.
+     *                {@link LinuxLatorConstants#TERMUX_API_PACKAGE_NAME}.
      * @param exitAppOnError If {@code true} and failed to get package context, then a dialog will
      *                       be shown which when dismissed will exit the app.
-     * @return Returns the {@link TermuxAPIAppSharedPreferences}. This will {@code null} if an exception is raised.
+     * @return Returns the {@link LinuxLatorAPIAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
-    public static TermuxAPIAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
-        Context termuxAPIPackageContext = TermuxUtils.getContextForPackageOrExitApp(context, TermuxConstants.TERMUX_API_PACKAGE_NAME, exitAppOnError);
+    public static LinuxLatorAPIAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
+        Context termuxAPIPackageContext = LinuxLatorUtils.getContextForPackageOrExitApp(context, LinuxLatorConstants.TERMUX_API_PACKAGE_NAME, exitAppOnError);
         if (termuxAPIPackageContext == null)
             return null;
         else
-            return new TermuxAPIAppSharedPreferences(termuxAPIPackageContext);
+            return new LinuxLatorAPIAppSharedPreferences(termuxAPIPackageContext);
     }
 
 

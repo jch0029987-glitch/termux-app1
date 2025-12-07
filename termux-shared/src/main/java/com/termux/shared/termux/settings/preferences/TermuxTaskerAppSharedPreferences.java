@@ -8,54 +8,54 @@ import androidx.annotation.Nullable;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
 import com.termux.shared.settings.preferences.SharedPreferenceUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.preferences.TermuxPreferenceConstants.TERMUX_TASKER_APP;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.settings.preferences.LinuxLatorPreferenceConstants.TERMUX_TASKER_APP;
 import com.termux.shared.logger.Logger;
 
-public class TermuxTaskerAppSharedPreferences extends AppSharedPreferences {
+public class LinuxLatorTaskerAppSharedPreferences extends AppSharedPreferences {
 
-    private static final String LOG_TAG = "TermuxTaskerAppSharedPreferences";
+    private static final String LOG_TAG = "LinuxLatorTaskerAppSharedPreferences";
 
-    private  TermuxTaskerAppSharedPreferences(@NonNull Context context) {
+    private  LinuxLatorTaskerAppSharedPreferences(@NonNull Context context) {
         super(context,
             SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_TASKER_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
+                LinuxLatorConstants.TERMUX_TASKER_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
             SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_TASKER_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+                LinuxLatorConstants.TERMUX_TASKER_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
-     * Get {@link TermuxTaskerAppSharedPreferences}.
+     * Get {@link LinuxLatorTaskerAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_TASKER_PACKAGE_NAME}.
-     * @return Returns the {@link TermuxTaskerAppSharedPreferences}. This will {@code null} if an exception is raised.
+     *                {@link LinuxLatorConstants#TERMUX_TASKER_PACKAGE_NAME}.
+     * @return Returns the {@link LinuxLatorTaskerAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
     @Nullable
-    public static TermuxTaskerAppSharedPreferences build(@NonNull final Context context) {
-        Context termuxTaskerPackageContext = PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_TASKER_PACKAGE_NAME);
+    public static LinuxLatorTaskerAppSharedPreferences build(@NonNull final Context context) {
+        Context termuxTaskerPackageContext = PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_TASKER_PACKAGE_NAME);
         if (termuxTaskerPackageContext == null)
             return null;
         else
-            return new TermuxTaskerAppSharedPreferences(termuxTaskerPackageContext);
+            return new LinuxLatorTaskerAppSharedPreferences(termuxTaskerPackageContext);
     }
 
     /**
-     * Get {@link TermuxTaskerAppSharedPreferences}.
+     * Get {@link LinuxLatorTaskerAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_TASKER_PACKAGE_NAME}.
+     *                {@link LinuxLatorConstants#TERMUX_TASKER_PACKAGE_NAME}.
      * @param exitAppOnError If {@code true} and failed to get package context, then a dialog will
      *                       be shown which when dismissed will exit the app.
-     * @return Returns the {@link TermuxTaskerAppSharedPreferences}. This will {@code null} if an exception is raised.
+     * @return Returns the {@link LinuxLatorTaskerAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
-    public static  TermuxTaskerAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
-        Context termuxTaskerPackageContext = TermuxUtils.getContextForPackageOrExitApp(context, TermuxConstants.TERMUX_TASKER_PACKAGE_NAME, exitAppOnError);
+    public static  LinuxLatorTaskerAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
+        Context termuxTaskerPackageContext = LinuxLatorUtils.getContextForPackageOrExitApp(context, LinuxLatorConstants.TERMUX_TASKER_PACKAGE_NAME, exitAppOnError);
         if (termuxTaskerPackageContext == null)
             return null;
         else
-            return new TermuxTaskerAppSharedPreferences(termuxTaskerPackageContext);
+            return new LinuxLatorTaskerAppSharedPreferences(termuxTaskerPackageContext);
     }
 
 

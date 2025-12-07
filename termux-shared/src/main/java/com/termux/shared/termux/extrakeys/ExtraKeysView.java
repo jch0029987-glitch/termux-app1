@@ -64,13 +64,13 @@ import com.termux.shared.theme.ThemeUtils;
  * it the {@link ExtraKeysInfo} to load and display the extra keys. Read its class javadocs for more
  * info on how to create it.
  *
- * Termux app defines the view in res/layout/view_terminal_toolbar_extra_keys and
+ * LinuxLator app defines the view in res/layout/view_terminal_toolbar_extra_keys and
  * inflates it in TerminalToolbarViewPager.instantiateItem() and sets the {@link ExtraKeysView} client
  * and calls {@link ExtraKeysView#reload(ExtraKeysInfo).
- * The {@link ExtraKeysInfo} is created by TermuxAppSharedProperties.setExtraKeys().
- * Then its got and the view height is adjusted in TermuxActivity.setTerminalToolbarHeight().
- * The client used is TermuxTerminalExtraKeys, which extends
- * {@link TerminalExtraKeys } to handle Termux app specific logic and
+ * The {@link ExtraKeysInfo} is created by LinuxLatorAppSharedProperties.setExtraKeys().
+ * Then its got and the view height is adjusted in LinuxLatorActivity.setTerminalToolbarHeight().
+ * The client used is LinuxLatorTerminalExtraKeys, which extends
+ * {@link TerminalExtraKeys } to handle LinuxLator app specific logic and
  * leave the rest to the super class.
  */
 public final class ExtraKeysView extends GridLayout {

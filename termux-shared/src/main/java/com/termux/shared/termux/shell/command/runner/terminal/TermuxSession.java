@@ -25,24 +25,24 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * A class that maintains info for foreground Termux sessions.
+ * A class that maintains info for foreground LinuxLator sessions.
  * It also provides a way to link each {@link TerminalSession} with the {@link ExecutionCommand}
  * that started it.
  */
-public class TermuxSession {
+public class LinuxLatorSession {
 
     private final TerminalSession mTerminalSession;
     private final ExecutionCommand mExecutionCommand;
-    private final TermuxSessionClient mTermuxSessionClient;
+    private final LinuxLatorSessionClient mLinuxLatorSessionClient;
     private final boolean mSetStdoutOnExit;
 
-    private static final String LOG_TAG = "TermuxSession";
+    private static final String LOG_TAG = "LinuxLatorSession";
 
-    private TermuxSession(@NonNull final TerminalSession terminalSession, @NonNull final ExecutionCommand executionCommand,
-                          final TermuxSessionClient termuxSessionClient, final boolean setStdoutOnExit) {
+    private LinuxLatorSession(@NonNull final TerminalSession terminalSession, @NonNull final ExecutionCommand executionCommand,
+                          final LinuxLatorSessionClient termuxSessionClient, final boolean setStdoutOnExit) {
         this.mTerminalSession = terminalSession;
         this.mExecutionCommand = executionCommand;
-        this.mTermuxSessionClient = termuxSessionClient;
+        this.mLinuxLatorSessionClient = termuxSessionClient;
         this.mSetStdoutOnExit = setStdoutOnExit;
     }
 
@@ -61,21 +61,21 @@ public class TermuxSession {
      *                              since environment setup may be dependent on current package.
      * @param executionCommand The {@link ExecutionCommand} containing the information for execution command.
      * @param terminalSessionClient The {@link TerminalSessionClient} interface implementation.
-     * @param termuxSessionClient The {@link TermuxSessionClient} interface implementation.
+     * @param termuxSessionClient The {@link LinuxLatorSessionClient} interface implementation.
      * @param shellEnvironmentClient The {@link IShellEnvironment} interface implementation.
      * @param additionalEnvironment The additional shell environment variables to export. Existing
      *                              variables will be overridden.
      * @param setStdoutOnExit If set to {@code true}, then the {@link ResultData#stdout}
-     *                        available in the {@link TermuxSessionClient#onTermuxSessionExited(TermuxSession)}
+     *                        available in the {@link LinuxLatorSessionClient#onLinuxLatorSessionExited(LinuxLatorSession)}
      *                        callback will be set to the {@link TerminalSession} transcript. The session
      *                        transcript will contain both stdout and stderr combined, basically
      *                        anything sent to the the pseudo terminal /dev/pts, including PS1 prefixes.
      *                        Set this to {@code true} only if the session transcript is required,
      *                        since this requires extra processing to get it.
-     * @return Returns the {@link TermuxSession}. This will be {@code null} if failed to start the execution command.
+     * @return Returns the {@link LinuxLatorSession}. This will be {@code null} if failed to start the execution command.
      */
-    public static TermuxSession execute(@NonNull final Context currentPackageContext, @NonNull ExecutionCommand executionCommand,
-                                        @NonNull final TerminalSessionClient terminalSessionClient, final TermuxSessionClient termuxSessionClient,
+    public static LinuxLatorSession execute(@NonNull final Context currentPackageContext, @NonNull ExecutionCommand executionCommand,
+                                        @NonNull final TerminalSessionClient terminalSessionClient, final LinuxLatorSessionClient termuxSessionClient,
                                         @NonNull final IShellEnvironment shellEnvironmentClient,
                                         @Nullable HashMap<String, String> additionalEnvironment,
                                         final boolean setStdoutOnExit) {
@@ -144,15 +144,15 @@ public class TermuxSession {
 
         if (!executionCommand.setState(ExecutionCommand.ExecutionState.EXECUTING)) {
             executionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), currentPackageContext.getString(R.string.error_failed_to_execute_termux_session_command, executionCommand.getCommandIdAndLabelLogString()));
-            TermuxSession.processTermuxSessionResult(null, executionCommand);
+            LinuxLatorSession.processLinuxLatorSessionResult(null, executionCommand);
             return null;
         }
 
         Logger.logDebugExtended(LOG_TAG, executionCommand.toString());
-        Logger.logVerboseExtended(LOG_TAG, "\"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession Environment:\n" +
+        Logger.logVerboseExtended(LOG_TAG, "\"" + executionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession Environment:\n" +
             Joiner.on("\n").join(environmentArray));
 
-        Logger.logDebug(LOG_TAG, "Running \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession");
+        Logger.logDebug(LOG_TAG, "Running \"" + executionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession");
         TerminalSession terminalSession = new TerminalSession(executionCommand.executable,
             executionCommand.workingDirectory, executionCommand.arguments, environmentArray,
             executionCommand.terminalTranscriptRows, terminalSessionClient);
@@ -161,16 +161,16 @@ public class TermuxSession {
             terminalSession.mSessionName = executionCommand.shellName;
         }
 
-        return new TermuxSession(terminalSession, executionCommand, termuxSessionClient, setStdoutOnExit);
+        return new LinuxLatorSession(terminalSession, executionCommand, termuxSessionClient, setStdoutOnExit);
     }
 
     /**
-     * Signal that this {@link TermuxSession} has finished.  This should be called when
+     * Signal that this {@link LinuxLatorSession} has finished.  This should be called when
      * {@link TerminalSessionClient#onSessionFinished(TerminalSession)} callback is received by the caller.
      *
      * If the processes has finished, then sets {@link ResultData#stdout}, {@link ResultData#stderr}
      * and {@link ResultData#exitCode} for the {@link #mExecutionCommand} of the {@code termuxTask}
-     * and then calls {@link #processTermuxSessionResult(TermuxSession, ExecutionCommand)} to process the result}.
+     * and then calls {@link #processLinuxLatorSessionResult(LinuxLatorSession, ExecutionCommand)} to process the result}.
      *
      */
     public void finish() {
@@ -180,13 +180,13 @@ public class TermuxSession {
         int exitCode = mTerminalSession.getExitStatus();
 
         if (exitCode == 0)
-            Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession exited normally");
+            Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession exited normally");
         else
-            Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession exited with code: " + exitCode);
+            Logger.logDebug(LOG_TAG, "The \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession exited with code: " + exitCode);
 
         // If the execution command has already failed, like SIGKILL was sent, then don't continue
         if (mExecutionCommand.isStateFailed()) {
-            Logger.logDebug(LOG_TAG, "Ignoring setting \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession state to ExecutionState.EXECUTED and processing results since it has already failed");
+            Logger.logDebug(LOG_TAG, "Ignoring setting \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession state to ExecutionState.EXECUTED and processing results since it has already failed");
             return;
         }
 
@@ -198,25 +198,25 @@ public class TermuxSession {
         if (!mExecutionCommand.setState(ExecutionCommand.ExecutionState.EXECUTED))
             return;
 
-        TermuxSession.processTermuxSessionResult(this, null);
+        LinuxLatorSession.processLinuxLatorSessionResult(this, null);
     }
 
     /**
-     * Kill this {@link TermuxSession} by sending a {@link OsConstants#SIGILL} to its {@link #mTerminalSession}
+     * Kill this {@link LinuxLatorSession} by sending a {@link OsConstants#SIGILL} to its {@link #mTerminalSession}
      * if its still executing.
      *
      * @param context The {@link Context} for operations.
-     * @param processResult If set to {@code true}, then the {@link #processTermuxSessionResult(TermuxSession, ExecutionCommand)}
+     * @param processResult If set to {@code true}, then the {@link #processLinuxLatorSessionResult(LinuxLatorSession, ExecutionCommand)}
      *                      will be called to process the failure.
      */
     public void killIfExecuting(@NonNull final Context context, boolean processResult) {
         // If execution command has already finished executing, then no need to process results or send SIGKILL
         if (mExecutionCommand.hasExecuted()) {
-            Logger.logDebug(LOG_TAG, "Ignoring sending SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession since it has already finished executing");
+            Logger.logDebug(LOG_TAG, "Ignoring sending SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession since it has already finished executing");
             return;
         }
 
-        Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession");
+        Logger.logDebug(LOG_TAG, "Send SIGKILL to \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession");
         if (mExecutionCommand.setStateFailed(Errno.ERRNO_FAILED.getCode(), context.getString(R.string.error_sending_sigkill_to_process))) {
             if (processResult) {
                 mExecutionCommand.resultData.exitCode = 137; // SIGKILL
@@ -225,7 +225,7 @@ public class TermuxSession {
                 if (this.mSetStdoutOnExit)
                     mExecutionCommand.resultData.stdout.append(ShellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
 
-                TermuxSession.processTermuxSessionResult(this, null);
+                LinuxLatorSession.processLinuxLatorSessionResult(this, null);
             }
         }
 
@@ -234,36 +234,36 @@ public class TermuxSession {
     }
 
     /**
-     * Process the results of {@link TermuxSession} or {@link ExecutionCommand}.
+     * Process the results of {@link LinuxLatorSession} or {@link ExecutionCommand}.
      *
      * Only one of {@code termuxSession} and {@code executionCommand} must be set.
      *
-     * If the {@code termuxSession} and its {@link #mTermuxSessionClient} are not {@code null},
-     * then the {@link TermuxSession.TermuxSessionClient#onTermuxSessionExited(TermuxSession)}
+     * If the {@code termuxSession} and its {@link #mLinuxLatorSessionClient} are not {@code null},
+     * then the {@link LinuxLatorSession.LinuxLatorSessionClient#onLinuxLatorSessionExited(LinuxLatorSession)}
      * callback will be called.
      *
-     * @param termuxSession The {@link TermuxSession}, which should be set if
-     *                  {@link #execute(Context, ExecutionCommand, TerminalSessionClient, TermuxSessionClient, IShellEnvironment, HashMap, boolean)}
+     * @param termuxSession The {@link LinuxLatorSession}, which should be set if
+     *                  {@link #execute(Context, ExecutionCommand, TerminalSessionClient, LinuxLatorSessionClient, IShellEnvironment, HashMap, boolean)}
      *                   successfully started the process.
      * @param executionCommand The {@link ExecutionCommand}, which should be set if
-     *                          {@link #execute(Context, ExecutionCommand, TerminalSessionClient, TermuxSessionClient, IShellEnvironment, HashMap, boolean)}
+     *                          {@link #execute(Context, ExecutionCommand, TerminalSessionClient, LinuxLatorSessionClient, IShellEnvironment, HashMap, boolean)}
      *                          failed to start the process.
      */
-    private static void processTermuxSessionResult(final TermuxSession termuxSession, ExecutionCommand executionCommand) {
+    private static void processLinuxLatorSessionResult(final LinuxLatorSession termuxSession, ExecutionCommand executionCommand) {
         if (termuxSession != null)
             executionCommand = termuxSession.mExecutionCommand;
 
         if (executionCommand == null) return;
 
         if (executionCommand.shouldNotProcessResults()) {
-            Logger.logDebug(LOG_TAG, "Ignoring duplicate call to process \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession result");
+            Logger.logDebug(LOG_TAG, "Ignoring duplicate call to process \"" + executionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession result");
             return;
         }
 
-        Logger.logDebug(LOG_TAG, "Processing \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession result");
+        Logger.logDebug(LOG_TAG, "Processing \"" + executionCommand.getCommandIdAndLabelLogString() + "\" LinuxLatorSession result");
 
-        if (termuxSession != null && termuxSession.mTermuxSessionClient != null) {
-            termuxSession.mTermuxSessionClient.onTermuxSessionExited(termuxSession);
+        if (termuxSession != null && termuxSession.mLinuxLatorSessionClient != null) {
+            termuxSession.mLinuxLatorSessionClient.onLinuxLatorSessionExited(termuxSession);
         } else {
             // If a callback is not set and execution command didn't fail, then we set success state now
             // Otherwise, the callback host can set it himself when its done with the termuxSession
@@ -282,14 +282,14 @@ public class TermuxSession {
 
 
 
-    public interface TermuxSessionClient {
+    public interface LinuxLatorSessionClient {
 
         /**
-         * Callback function for when {@link TermuxSession} exits.
+         * Callback function for when {@link LinuxLatorSession} exits.
          *
-         * @param termuxSession The {@link TermuxSession} that exited.
+         * @param termuxSession The {@link LinuxLatorSession} that exited.
          */
-        void onTermuxSessionExited(TermuxSession termuxSession);
+        void onLinuxLatorSessionExited(LinuxLatorSession termuxSession);
 
     }
 

@@ -9,53 +9,53 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
 import com.termux.shared.settings.preferences.SharedPreferenceUtils;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.preferences.TermuxPreferenceConstants.TERMUX_STYLING_APP;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.settings.preferences.LinuxLatorPreferenceConstants.TERMUX_STYLING_APP;
+import com.termux.shared.termux.LinuxLatorConstants;
 
-public class TermuxStylingAppSharedPreferences extends AppSharedPreferences {
+public class LinuxLatorStylingAppSharedPreferences extends AppSharedPreferences {
 
-    private static final String LOG_TAG = "TermuxStylingAppSharedPreferences";
+    private static final String LOG_TAG = "LinuxLatorStylingAppSharedPreferences";
 
-    private TermuxStylingAppSharedPreferences(@NonNull Context context) {
+    private LinuxLatorStylingAppSharedPreferences(@NonNull Context context) {
         super(context,
             SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_STYLING_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
+                LinuxLatorConstants.TERMUX_STYLING_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
             SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_STYLING_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+                LinuxLatorConstants.TERMUX_STYLING_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
-     * Get {@link TermuxStylingAppSharedPreferences}.
+     * Get {@link LinuxLatorStylingAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_STYLING_PACKAGE_NAME}.
-     * @return Returns the {@link TermuxStylingAppSharedPreferences}. This will {@code null} if an exception is raised.
+     *                {@link LinuxLatorConstants#TERMUX_STYLING_PACKAGE_NAME}.
+     * @return Returns the {@link LinuxLatorStylingAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
     @Nullable
-    public static TermuxStylingAppSharedPreferences build(@NonNull final Context context) {
-        Context termuxStylingPackageContext = PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_STYLING_PACKAGE_NAME);
+    public static LinuxLatorStylingAppSharedPreferences build(@NonNull final Context context) {
+        Context termuxStylingPackageContext = PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_STYLING_PACKAGE_NAME);
         if (termuxStylingPackageContext == null)
             return null;
         else
-            return new TermuxStylingAppSharedPreferences(termuxStylingPackageContext);
+            return new LinuxLatorStylingAppSharedPreferences(termuxStylingPackageContext);
     }
 
     /**
-     * Get {@link TermuxStylingAppSharedPreferences}.
+     * Get {@link LinuxLatorStylingAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_STYLING_PACKAGE_NAME}.
+     *                {@link LinuxLatorConstants#TERMUX_STYLING_PACKAGE_NAME}.
      * @param exitAppOnError If {@code true} and failed to get package context, then a dialog will
      *                       be shown which when dismissed will exit the app.
-     * @return Returns the {@link TermuxStylingAppSharedPreferences}. This will {@code null} if an exception is raised.
+     * @return Returns the {@link LinuxLatorStylingAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
-    public static TermuxStylingAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
-        Context termuxStylingPackageContext = TermuxUtils.getContextForPackageOrExitApp(context, TermuxConstants.TERMUX_STYLING_PACKAGE_NAME, exitAppOnError);
+    public static LinuxLatorStylingAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
+        Context termuxStylingPackageContext = LinuxLatorUtils.getContextForPackageOrExitApp(context, LinuxLatorConstants.TERMUX_STYLING_PACKAGE_NAME, exitAppOnError);
         if (termuxStylingPackageContext == null)
             return null;
         else
-            return new TermuxStylingAppSharedPreferences(termuxStylingPackageContext);
+            return new LinuxLatorStylingAppSharedPreferences(termuxStylingPackageContext);
     }
 
 

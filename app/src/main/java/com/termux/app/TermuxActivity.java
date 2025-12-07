@@ -28,30 +28,30 @@ import android.widget.Toast;
 
 import com.termux.R;
 import com.termux.app.api.file.FileReceiverActivity;
-import com.termux.app.terminal.TermuxActivityRootView;
-import com.termux.app.terminal.TermuxTerminalSessionActivityClient;
-import com.termux.app.terminal.io.TermuxTerminalExtraKeys;
+import com.termux.app.terminal.LinuxLatorActivityRootView;
+import com.termux.app.terminal.LinuxLatorTerminalSessionActivityClient;
+import com.termux.app.terminal.io.LinuxLatorTerminalExtraKeys;
 import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.activity.ActivityUtils;
 import com.termux.shared.activity.media.AppCompatActivityUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.android.PermissionUtils;
 import com.termux.shared.data.DataUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorConstants.TERMUX_APP.TERMUX_ACTIVITY;
 import com.termux.app.activities.HelpActivity;
 import com.termux.app.activities.SettingsActivity;
-import com.termux.shared.termux.crash.TermuxCrashUtils;
-import com.termux.shared.termux.settings.preferences.TermuxAppSharedPreferences;
-import com.termux.app.terminal.TermuxSessionsListViewController;
+import com.termux.shared.termux.crash.LinuxLatorCrashUtils;
+import com.termux.shared.termux.settings.preferences.LinuxLatorAppSharedPreferences;
+import com.termux.app.terminal.LinuxLatorSessionsListViewController;
 import com.termux.app.terminal.io.TerminalToolbarViewPager;
-import com.termux.app.terminal.TermuxTerminalViewClient;
+import com.termux.app.terminal.LinuxLatorTerminalViewClient;
 import com.termux.shared.termux.extrakeys.ExtraKeysView;
 import com.termux.shared.termux.interact.TextInputDialogUtils;
 import com.termux.shared.logger.Logger;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.properties.TermuxAppSharedProperties;
-import com.termux.shared.termux.theme.TermuxThemeUtils;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.settings.properties.LinuxLatorAppSharedProperties;
+import com.termux.shared.termux.theme.LinuxLatorThemeUtils;
 import com.termux.shared.theme.NightMode;
 import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalSession;
@@ -77,51 +77,51 @@ import java.util.Arrays;
  * </ul>
  * about memory leaks.
  */
-public final class TermuxActivity extends AppCompatActivity implements ServiceConnection {
+public final class LinuxLatorActivity extends AppCompatActivity implements ServiceConnection {
 
     /**
-     * The connection to the {@link TermuxService}. Requested in {@link #onCreate(Bundle)} with a call to
+     * The connection to the {@link LinuxLatorService}. Requested in {@link #onCreate(Bundle)} with a call to
      * {@link #bindService(Intent, ServiceConnection, int)}, and obtained and stored in
      * {@link #onServiceConnected(ComponentName, IBinder)}.
      */
-    TermuxService mTermuxService;
+    LinuxLatorService mLinuxLatorService;
 
     /**
-     * The {@link TerminalView} shown in  {@link TermuxActivity} that displays the terminal.
+     * The {@link TerminalView} shown in  {@link LinuxLatorActivity} that displays the terminal.
      */
     TerminalView mTerminalView;
 
     /**
      *  The {@link TerminalViewClient} interface implementation to allow for communication between
-     *  {@link TerminalView} and {@link TermuxActivity}.
+     *  {@link TerminalView} and {@link LinuxLatorActivity}.
      */
-    TermuxTerminalViewClient mTermuxTerminalViewClient;
+    LinuxLatorTerminalViewClient mLinuxLatorTerminalViewClient;
 
     /**
      *  The {@link TerminalSessionClient} interface implementation to allow for communication between
-     *  {@link TerminalSession} and {@link TermuxActivity}.
+     *  {@link TerminalSession} and {@link LinuxLatorActivity}.
      */
-    TermuxTerminalSessionActivityClient mTermuxTerminalSessionActivityClient;
+    LinuxLatorTerminalSessionActivityClient mLinuxLatorTerminalSessionActivityClient;
 
     /**
-     * Termux app shared preferences manager.
+     * LinuxLator app shared preferences manager.
      */
-    private TermuxAppSharedPreferences mPreferences;
+    private LinuxLatorAppSharedPreferences mPreferences;
 
     /**
-     * Termux app SharedProperties loaded from termux.properties
+     * LinuxLator app SharedProperties loaded from termux.properties
      */
-    private TermuxAppSharedProperties mProperties;
+    private LinuxLatorAppSharedProperties mProperties;
 
     /**
-     * The root view of the {@link TermuxActivity}.
+     * The root view of the {@link LinuxLatorActivity}.
      */
-    TermuxActivityRootView mTermuxActivityRootView;
+    LinuxLatorActivityRootView mLinuxLatorActivityRootView;
 
     /**
-     * The space at the bottom of {@link @mTermuxActivityRootView} of the {@link TermuxActivity}.
+     * The space at the bottom of {@link @mLinuxLatorActivityRootView} of the {@link LinuxLatorActivity}.
      */
-    View mTermuxActivityBottomSpaceView;
+    View mLinuxLatorActivityBottomSpaceView;
 
     /**
      * The terminal extra keys view.
@@ -131,17 +131,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     /**
      * The client for the {@link #mExtraKeysView}.
      */
-    TermuxTerminalExtraKeys mTermuxTerminalExtraKeys;
+    LinuxLatorTerminalExtraKeys mLinuxLatorTerminalExtraKeys;
 
     /**
      * The termux sessions list controller.
      */
-    TermuxSessionsListViewController mTermuxSessionListViewController;
+    LinuxLatorSessionsListViewController mLinuxLatorSessionListViewController;
 
     /**
-     * The {@link TermuxActivity} broadcast receiver for various things like terminal style configuration changes.
+     * The {@link LinuxLatorActivity} broadcast receiver for various things like terminal style configuration changes.
      */
-    private final BroadcastReceiver mTermuxActivityBroadcastReceiver = new TermuxActivityBroadcastReceiver();
+    private final BroadcastReceiver mLinuxLatorActivityBroadcastReceiver = new LinuxLatorActivityBroadcastReceiver();
 
     /**
      * The last toast shown, used cancel current toast before showing new in {@link #showToast(String, boolean)}.
@@ -167,7 +167,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private boolean mIsActivityRecreated = false;
 
     /**
-     * The {@link TermuxActivity} is in an invalid state and must not be run.
+     * The {@link LinuxLatorActivity} is in an invalid state and must not be run.
      */
     private boolean mIsInvalidState;
 
@@ -192,7 +192,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     private static final String ARG_TERMINAL_TOOLBAR_TEXT_INPUT = "terminal_toolbar_text_input";
     private static final String ARG_ACTIVITY_RECREATED = "activity_recreated";
 
-    private static final String LOG_TAG = "TermuxActivity";
+    private static final String LOG_TAG = "LinuxLatorActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -205,8 +205,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         // Delete ReportInfo serialized object files from cache older than 14 days
         ReportActivity.deleteReportInfoFilesOlderThanXDays(this, 14, false);
 
-        // Load Termux app SharedProperties from disk
-        mProperties = TermuxAppSharedProperties.getProperties();
+        // Load LinuxLator app SharedProperties from disk
+        mProperties = LinuxLatorAppSharedProperties.getProperties();
         reloadProperties();
 
         setActivityTheme();
@@ -216,8 +216,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         setContentView(R.layout.activity_termux);
 
         // Load termux shared preferences
-        // This will also fail if TermuxConstants.TERMUX_PACKAGE_NAME does not equal applicationId
-        mPreferences = TermuxAppSharedPreferences.build(this, true);
+        // This will also fail if LinuxLatorConstants.TERMUX_PACKAGE_NAME does not equal applicationId
+        mPreferences = LinuxLatorAppSharedPreferences.build(this, true);
         if (mPreferences == null) {
             // An AlertDialog should have shown to kill the app, so we don't continue running activity code
             mIsInvalidState = true;
@@ -226,10 +226,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         setMargins();
 
-        mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
-        mTermuxActivityRootView.setActivity(this);
-        mTermuxActivityBottomSpaceView = findViewById(R.id.activity_termux_bottom_space_view);
-        mTermuxActivityRootView.setOnApplyWindowInsetsListener(new TermuxActivityRootView.WindowInsetsListener());
+        mLinuxLatorActivityRootView = findViewById(R.id.activity_termux_root_view);
+        mLinuxLatorActivityRootView.setActivity(this);
+        mLinuxLatorActivityBottomSpaceView = findViewById(R.id.activity_termux_bottom_space_view);
+        mLinuxLatorActivityRootView.setOnApplyWindowInsetsListener(new LinuxLatorActivityRootView.WindowInsetsListener());
 
         View content = findViewById(android.R.id.content);
         content.setOnApplyWindowInsetsListener((v, insets) -> {
@@ -241,7 +241,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
 
-        setTermuxTerminalViewAndClients();
+        setLinuxLatorTerminalViewAndClients();
 
         setTerminalToolbarView(savedInstanceState);
 
@@ -256,8 +256,8 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         FileReceiverActivity.updateFileReceiverActivityComponentsState(this);
 
         try {
-            // Start the {@link TermuxService} and make it run regardless of who is bound to it
-            Intent serviceIntent = new Intent(this, TermuxService.class);
+            // Start the {@link LinuxLatorService} and make it run regardless of who is bound to it
+            Intent serviceIntent = new Intent(this, LinuxLatorService.class);
             startService(serviceIntent);
 
             // Attempt to bind to the service, this will call the {@link #onServiceConnected(ComponentName, IBinder)}
@@ -265,7 +265,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (!bindService(serviceIntent, this, 0))
                 throw new RuntimeException("bindService() failed");
         } catch (Exception e) {
-            Logger.logStackTraceWithMessage(LOG_TAG,"TermuxActivity failed to start TermuxService", e);
+            Logger.logStackTraceWithMessage(LOG_TAG,"LinuxLatorActivity failed to start LinuxLatorService", e);
             Logger.showToast(this,
                 getString(e.getMessage() != null && e.getMessage().contains("app is in background") ?
                     R.string.error_termux_service_start_failed_bg : R.string.error_termux_service_start_failed_general),
@@ -274,9 +274,9 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return;
         }
 
-        // Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
+        // Send the {@link LinuxLatorConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that LinuxLator
         // app has been opened.
-        TermuxUtils.sendTermuxOpenedBroadcast(this);
+        LinuxLatorUtils.sendLinuxLatorOpenedBroadcast(this);
     }
 
     @Override
@@ -289,16 +289,16 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mIsVisible = true;
 
-        if (mTermuxTerminalSessionActivityClient != null)
-            mTermuxTerminalSessionActivityClient.onStart();
+        if (mLinuxLatorTerminalSessionActivityClient != null)
+            mLinuxLatorTerminalSessionActivityClient.onStart();
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onStart();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onStart();
 
         if (mPreferences.isTerminalMarginAdjustmentEnabled())
-            addTermuxActivityRootViewGlobalLayoutListener();
+            addLinuxLatorActivityRootViewGlobalLayoutListener();
 
-        registerTermuxActivityBroadcastReceiver();
+        registerLinuxLatorActivityBroadcastReceiver();
     }
 
     @Override
@@ -309,15 +309,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (mIsInvalidState) return;
 
-        if (mTermuxTerminalSessionActivityClient != null)
-            mTermuxTerminalSessionActivityClient.onResume();
+        if (mLinuxLatorTerminalSessionActivityClient != null)
+            mLinuxLatorTerminalSessionActivityClient.onResume();
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onResume();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onResume();
 
         // Check if a crash happened on last run of the app or if a plugin crashed and show a
         // notification with the crash details if it did
-        TermuxCrashUtils.notifyAppCrashFromCrashLogFile(this, LOG_TAG);
+        LinuxLatorCrashUtils.notifyAppCrashFromCrashLogFile(this, LOG_TAG);
 
         mIsOnResumeAfterOnCreate = false;
     }
@@ -332,15 +332,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         mIsVisible = false;
 
-        if (mTermuxTerminalSessionActivityClient != null)
-            mTermuxTerminalSessionActivityClient.onStop();
+        if (mLinuxLatorTerminalSessionActivityClient != null)
+            mLinuxLatorTerminalSessionActivityClient.onStop();
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onStop();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onStop();
 
-        removeTermuxActivityRootViewGlobalLayoutListener();
+        removeLinuxLatorActivityRootViewGlobalLayoutListener();
 
-        unregisterTermuxActivityBroadcastReceiver();
+        unregisterLinuxLatorActivityBroadcastReceiver();
         getDrawer().closeDrawers();
     }
 
@@ -352,10 +352,10 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         if (mIsInvalidState) return;
 
-        if (mTermuxService != null) {
+        if (mLinuxLatorService != null) {
             // Do not leave service and session clients with references to activity.
-            mTermuxService.unsetTermuxTerminalSessionClient();
-            mTermuxService = null;
+            mLinuxLatorService.unsetLinuxLatorTerminalSessionClient();
+            mLinuxLatorService = null;
         }
 
         try {
@@ -387,23 +387,23 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void onServiceConnected(ComponentName componentName, IBinder service) {
         Logger.logDebug(LOG_TAG, "onServiceConnected");
 
-        mTermuxService = ((TermuxService.LocalBinder) service).service;
+        mLinuxLatorService = ((LinuxLatorService.LocalBinder) service).service;
 
-        setTermuxSessionsListView();
+        setLinuxLatorSessionsListView();
 
         final Intent intent = getIntent();
         setIntent(null);
 
-        if (mTermuxService.isTermuxSessionsEmpty()) {
+        if (mLinuxLatorService.isLinuxLatorSessionsEmpty()) {
             if (mIsVisible) {
-                TermuxInstaller.setupBootstrapIfNeeded(TermuxActivity.this, () -> {
-                    if (mTermuxService == null) return; // Activity might have been destroyed.
+                LinuxLatorInstaller.setupBootstrapIfNeeded(LinuxLatorActivity.this, () -> {
+                    if (mLinuxLatorService == null) return; // Activity might have been destroyed.
                     try {
                         boolean launchFailsafe = false;
                         if (intent != null && intent.getExtras() != null) {
                             launchFailsafe = intent.getExtras().getBoolean(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
                         }
-                        mTermuxTerminalSessionActivityClient.addNewSession(launchFailsafe, null);
+                        mLinuxLatorTerminalSessionActivityClient.addNewSession(launchFailsafe, null);
                     } catch (WindowManager.BadTokenException e) {
                         // Activity finished - ignore.
                     }
@@ -419,21 +419,21 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             if (!mIsActivityRecreated && intent != null && Intent.ACTION_RUN.equals(intent.getAction())) {
                 // Android 7.1 app shortcut from res/xml/shortcuts.xml.
                 boolean isFailSafe = intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
-                mTermuxTerminalSessionActivityClient.addNewSession(isFailSafe, null);
+                mLinuxLatorTerminalSessionActivityClient.addNewSession(isFailSafe, null);
             } else {
-                mTermuxTerminalSessionActivityClient.setCurrentSession(mTermuxTerminalSessionActivityClient.getCurrentStoredSessionOrLast());
+                mLinuxLatorTerminalSessionActivityClient.setCurrentSession(mLinuxLatorTerminalSessionActivityClient.getCurrentStoredSessionOrLast());
             }
         }
 
         // Update the {@link TerminalSession} and {@link TerminalEmulator} clients.
-        mTermuxService.setTermuxTerminalSessionClient(mTermuxTerminalSessionActivityClient);
+        mLinuxLatorService.setLinuxLatorTerminalSessionClient(mLinuxLatorTerminalSessionActivityClient);
     }
 
     @Override
     public void onServiceDisconnected(ComponentName name) {
         Logger.logDebug(LOG_TAG, "onServiceDisconnected");
 
-        // Respect being stopped from the {@link TermuxService} notification action.
+        // Respect being stopped from the {@link LinuxLatorService} notification action.
         finishActivityIfNotFinishing();
     }
 
@@ -443,17 +443,17 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     private void reloadProperties() {
-        mProperties.loadTermuxPropertiesFromDisk();
+        mProperties.loadLinuxLatorPropertiesFromDisk();
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onReloadProperties();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onReloadProperties();
     }
 
 
 
     private void setActivityTheme() {
         // Update NightMode.APP_NIGHT_MODE
-        TermuxThemeUtils.setAppNightMode(mProperties.getNightMode());
+        LinuxLatorThemeUtils.setAppNightMode(mProperties.getNightMode());
 
         // Set activity night mode. If NightMode.SYSTEM is set, then android will automatically
         // trigger recreation of activity when uiMode/dark mode configuration is changed so that
@@ -470,46 +470,46 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
 
-    public void addTermuxActivityRootViewGlobalLayoutListener() {
-        getTermuxActivityRootView().getViewTreeObserver().addOnGlobalLayoutListener(getTermuxActivityRootView());
+    public void addLinuxLatorActivityRootViewGlobalLayoutListener() {
+        getLinuxLatorActivityRootView().getViewTreeObserver().addOnGlobalLayoutListener(getLinuxLatorActivityRootView());
     }
 
-    public void removeTermuxActivityRootViewGlobalLayoutListener() {
-        if (getTermuxActivityRootView() != null)
-            getTermuxActivityRootView().getViewTreeObserver().removeOnGlobalLayoutListener(getTermuxActivityRootView());
+    public void removeLinuxLatorActivityRootViewGlobalLayoutListener() {
+        if (getLinuxLatorActivityRootView() != null)
+            getLinuxLatorActivityRootView().getViewTreeObserver().removeOnGlobalLayoutListener(getLinuxLatorActivityRootView());
     }
 
 
 
-    private void setTermuxTerminalViewAndClients() {
+    private void setLinuxLatorTerminalViewAndClients() {
         // Set termux terminal view and session clients
-        mTermuxTerminalSessionActivityClient = new TermuxTerminalSessionActivityClient(this);
-        mTermuxTerminalViewClient = new TermuxTerminalViewClient(this, mTermuxTerminalSessionActivityClient);
+        mLinuxLatorTerminalSessionActivityClient = new LinuxLatorTerminalSessionActivityClient(this);
+        mLinuxLatorTerminalViewClient = new LinuxLatorTerminalViewClient(this, mLinuxLatorTerminalSessionActivityClient);
 
         // Set termux terminal view
         mTerminalView = findViewById(R.id.terminal_view);
-        mTerminalView.setTerminalViewClient(mTermuxTerminalViewClient);
+        mTerminalView.setTerminalViewClient(mLinuxLatorTerminalViewClient);
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onCreate();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onCreate();
 
-        if (mTermuxTerminalSessionActivityClient != null)
-            mTermuxTerminalSessionActivityClient.onCreate();
+        if (mLinuxLatorTerminalSessionActivityClient != null)
+            mLinuxLatorTerminalSessionActivityClient.onCreate();
     }
 
-    private void setTermuxSessionsListView() {
+    private void setLinuxLatorSessionsListView() {
         ListView termuxSessionsListView = findViewById(R.id.terminal_sessions_list);
-        mTermuxSessionListViewController = new TermuxSessionsListViewController(this, mTermuxService.getTermuxSessions());
-        termuxSessionsListView.setAdapter(mTermuxSessionListViewController);
-        termuxSessionsListView.setOnItemClickListener(mTermuxSessionListViewController);
-        termuxSessionsListView.setOnItemLongClickListener(mTermuxSessionListViewController);
+        mLinuxLatorSessionListViewController = new LinuxLatorSessionsListViewController(this, mLinuxLatorService.getLinuxLatorSessions());
+        termuxSessionsListView.setAdapter(mLinuxLatorSessionListViewController);
+        termuxSessionsListView.setOnItemClickListener(mLinuxLatorSessionListViewController);
+        termuxSessionsListView.setOnItemLongClickListener(mLinuxLatorSessionListViewController);
     }
 
 
 
     private void setTerminalToolbarView(Bundle savedInstanceState) {
-        mTermuxTerminalExtraKeys = new TermuxTerminalExtraKeys(this, mTerminalView,
-            mTermuxTerminalViewClient, mTermuxTerminalSessionActivityClient);
+        mLinuxLatorTerminalExtraKeys = new LinuxLatorTerminalExtraKeys(this, mTerminalView,
+            mLinuxLatorTerminalViewClient, mLinuxLatorTerminalSessionActivityClient);
 
         final ViewPager terminalToolbarViewPager = getTerminalToolbarViewPager();
         if (mPreferences.shouldShowTerminalToolbar()) terminalToolbarViewPager.setVisibility(View.VISIBLE);
@@ -533,7 +533,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         ViewGroup.LayoutParams layoutParams = terminalToolbarViewPager.getLayoutParams();
         layoutParams.height = Math.round(mTerminalToolbarDefaultHeight *
-            (mTermuxTerminalExtraKeys.getExtraKeysInfo() == null ? 0 : mTermuxTerminalExtraKeys.getExtraKeysInfo().getMatrix().length) *
+            (mLinuxLatorTerminalExtraKeys.getExtraKeysInfo() == null ? 0 : mLinuxLatorTerminalExtraKeys.getExtraKeysInfo().getMatrix().length) *
             mProperties.getTerminalToolbarHeightScaleFactor());
         terminalToolbarViewPager.setLayoutParams(layoutParams);
     }
@@ -572,11 +572,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void setNewSessionButtonView() {
         View newSessionButton = findViewById(R.id.new_session_button);
-        newSessionButton.setOnClickListener(v -> mTermuxTerminalSessionActivityClient.addNewSession(false, null));
+        newSessionButton.setOnClickListener(v -> mLinuxLatorTerminalSessionActivityClient.addNewSession(false, null));
         newSessionButton.setOnLongClickListener(v -> {
-            TextInputDialogUtils.textInput(TermuxActivity.this, R.string.title_create_named_session, null,
-                R.string.action_create_named_session_confirm, text -> mTermuxTerminalSessionActivityClient.addNewSession(false, text),
-                R.string.action_new_session_failsafe, text -> mTermuxTerminalSessionActivityClient.addNewSession(true, text),
+            TextInputDialogUtils.textInput(LinuxLatorActivity.this, R.string.title_create_named_session, null,
+                R.string.action_create_named_session_confirm, text -> mLinuxLatorTerminalSessionActivityClient.addNewSession(false, text),
+                R.string.action_new_session_failsafe, text -> mLinuxLatorTerminalSessionActivityClient.addNewSession(true, text),
                 -1, null, null);
             return true;
         });
@@ -584,7 +584,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     private void setToggleKeyboardView() {
         findViewById(R.id.toggle_keyboard_button).setOnClickListener(v -> {
-            mTermuxTerminalViewClient.onToggleSoftKeyboardRequest();
+            mLinuxLatorTerminalViewClient.onToggleSoftKeyboardRequest();
             getDrawer().closeDrawers();
         });
 
@@ -610,7 +610,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
     public void finishActivityIfNotFinishing() {
         // prevent duplicate calls to finish() if called from multiple places
-        if (!TermuxActivity.this.isFinishing()) {
+        if (!LinuxLatorActivity.this.isFinishing()) {
             finish();
         }
     }
@@ -619,7 +619,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
     public void showToast(String text, boolean longDuration) {
         if (text == null || text.isEmpty()) return;
         if (mLastToast != null) mLastToast.cancel();
-        mLastToast = Toast.makeText(TermuxActivity.this, text, longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        mLastToast = Toast.makeText(LinuxLatorActivity.this, text, longDuration ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
         mLastToast.setGravity(Gravity.TOP, 0, 0);
         mLastToast.show();
     }
@@ -663,13 +663,13 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         switch (item.getItemId()) {
             case CONTEXT_MENU_SELECT_URL_ID:
-                mTermuxTerminalViewClient.showUrlSelection();
+                mLinuxLatorTerminalViewClient.showUrlSelection();
                 return true;
             case CONTEXT_MENU_SHARE_TRANSCRIPT_ID:
-                mTermuxTerminalViewClient.shareSessionTranscript();
+                mLinuxLatorTerminalViewClient.shareSessionTranscript();
                 return true;
             case CONTEXT_MENU_SHARE_SELECTED_TEXT:
-                mTermuxTerminalViewClient.shareSelectedText();
+                mLinuxLatorTerminalViewClient.shareSelectedText();
                 return true;
             case CONTEXT_MENU_AUTOFILL_USERNAME:
                 mTerminalView.requestAutoFillUsername();
@@ -696,7 +696,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
                 ActivityUtils.startActivity(this, new Intent(this, SettingsActivity.class));
                 return true;
             case CONTEXT_MENU_REPORT_ID:
-                mTermuxTerminalViewClient.reportIssueFromTranscript();
+                mLinuxLatorTerminalViewClient.reportIssueFromTranscript();
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -729,14 +729,14 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             session.reset();
             showToast(getResources().getString(R.string.msg_terminal_reset), true);
 
-            if (mTermuxTerminalSessionActivityClient != null)
-                mTermuxTerminalSessionActivityClient.onResetTerminalSession();
+            if (mLinuxLatorTerminalSessionActivityClient != null)
+                mLinuxLatorTerminalSessionActivityClient.onResetTerminalSession();
         }
     }
 
     private void showStylingDialog() {
         Intent stylingIntent = new Intent();
-        stylingIntent.setClassName(TermuxConstants.TERMUX_STYLING_PACKAGE_NAME, TermuxConstants.TERMUX_STYLING_APP.TERMUX_STYLING_ACTIVITY_NAME);
+        stylingIntent.setClassName(LinuxLatorConstants.TERMUX_STYLING_PACKAGE_NAME, LinuxLatorConstants.TERMUX_STYLING_APP.TERMUX_STYLING_ACTIVITY_NAME);
         try {
             startActivity(stylingIntent);
         } catch (ActivityNotFoundException | IllegalArgumentException e) {
@@ -744,7 +744,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             // However, crash reporting shows that it sometimes does, so catch it here.
             new AlertDialog.Builder(this).setMessage(getString(R.string.error_styling_not_installed))
                 .setPositiveButton(R.string.action_styling_install,
-                    (dialog, which) -> ActivityUtils.startActivity(this, new Intent(Intent.ACTION_VIEW, Uri.parse(TermuxConstants.TERMUX_STYLING_FDROID_PACKAGE_URL))))
+                    (dialog, which) -> ActivityUtils.startActivity(this, new Intent(Intent.ACTION_VIEW, Uri.parse(LinuxLatorConstants.TERMUX_STYLING_FDROID_PACKAGE_URL))))
                 .setNegativeButton(android.R.string.cancel, null).show();
         }
     }
@@ -774,15 +774,15 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
                 // If permission is granted, then also setup storage symlinks.
                 if(PermissionUtils.checkAndRequestLegacyOrManageExternalStoragePermission(
-                    TermuxActivity.this, requestCode, !isPermissionCallback)) {
+                    LinuxLatorActivity.this, requestCode, !isPermissionCallback)) {
                     if (isPermissionCallback)
-                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                        Logger.logInfoAndShowToast(LinuxLatorActivity.this, LOG_TAG,
                             getString(com.termux.shared.R.string.msg_storage_permission_granted_on_request));
 
-                    TermuxInstaller.setupStorageSymlinks(TermuxActivity.this);
+                    LinuxLatorInstaller.setupStorageSymlinks(LinuxLatorActivity.this);
                 } else {
                     if (isPermissionCallback)
-                        Logger.logInfoAndShowToast(TermuxActivity.this, LOG_TAG,
+                        Logger.logInfoAndShowToast(LinuxLatorActivity.this, LOG_TAG,
                             getString(com.termux.shared.R.string.msg_storage_permission_not_granted_on_request));
                 }
             }
@@ -813,20 +813,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         return mNavBarHeight;
     }
 
-    public TermuxActivityRootView getTermuxActivityRootView() {
-        return mTermuxActivityRootView;
+    public LinuxLatorActivityRootView getLinuxLatorActivityRootView() {
+        return mLinuxLatorActivityRootView;
     }
 
-    public View getTermuxActivityBottomSpaceView() {
-        return mTermuxActivityBottomSpaceView;
+    public View getLinuxLatorActivityBottomSpaceView() {
+        return mLinuxLatorActivityBottomSpaceView;
     }
 
     public ExtraKeysView getExtraKeysView() {
         return mExtraKeysView;
     }
 
-    public TermuxTerminalExtraKeys getTermuxTerminalExtraKeys() {
-        return mTermuxTerminalExtraKeys;
+    public LinuxLatorTerminalExtraKeys getLinuxLatorTerminalExtraKeys() {
+        return mLinuxLatorTerminalExtraKeys;
     }
 
     public void setExtraKeysView(ExtraKeysView extraKeysView) {
@@ -856,7 +856,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
     public void termuxSessionListNotifyUpdated() {
-        mTermuxSessionListViewController.notifyDataSetChanged();
+        mLinuxLatorSessionListViewController.notifyDataSetChanged();
     }
 
     public boolean isVisible() {
@@ -873,20 +873,20 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
 
 
-    public TermuxService getTermuxService() {
-        return mTermuxService;
+    public LinuxLatorService getLinuxLatorService() {
+        return mLinuxLatorService;
     }
 
     public TerminalView getTerminalView() {
         return mTerminalView;
     }
 
-    public TermuxTerminalViewClient getTermuxTerminalViewClient() {
-        return mTermuxTerminalViewClient;
+    public LinuxLatorTerminalViewClient getLinuxLatorTerminalViewClient() {
+        return mLinuxLatorTerminalViewClient;
     }
 
-    public TermuxTerminalSessionActivityClient getTermuxTerminalSessionClient() {
-        return mTermuxTerminalSessionActivityClient;
+    public LinuxLatorTerminalSessionActivityClient getLinuxLatorTerminalSessionClient() {
+        return mLinuxLatorTerminalSessionActivityClient;
     }
 
     @Nullable
@@ -897,38 +897,38 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return null;
     }
 
-    public TermuxAppSharedPreferences getPreferences() {
+    public LinuxLatorAppSharedPreferences getPreferences() {
         return mPreferences;
     }
 
-    public TermuxAppSharedProperties getProperties() {
+    public LinuxLatorAppSharedProperties getProperties() {
         return mProperties;
     }
 
 
 
 
-    public static void updateTermuxActivityStyling(Context context, boolean recreateActivity) {
+    public static void updateLinuxLatorActivityStyling(Context context, boolean recreateActivity) {
         // Make sure that terminal styling is always applied.
         Intent stylingIntent = new Intent(TERMUX_ACTIVITY.ACTION_RELOAD_STYLE);
         stylingIntent.putExtra(TERMUX_ACTIVITY.EXTRA_RECREATE_ACTIVITY, recreateActivity);
         context.sendBroadcast(stylingIntent);
     }
 
-    private void registerTermuxActivityBroadcastReceiver() {
+    private void registerLinuxLatorActivityBroadcastReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH);
         intentFilter.addAction(TERMUX_ACTIVITY.ACTION_RELOAD_STYLE);
         intentFilter.addAction(TERMUX_ACTIVITY.ACTION_REQUEST_PERMISSIONS);
 
-        registerReceiver(mTermuxActivityBroadcastReceiver, intentFilter);
+        registerReceiver(mLinuxLatorActivityBroadcastReceiver, intentFilter);
     }
 
-    private void unregisterTermuxActivityBroadcastReceiver() {
-        unregisterReceiver(mTermuxActivityBroadcastReceiver);
+    private void unregisterLinuxLatorActivityBroadcastReceiver() {
+        unregisterReceiver(mLinuxLatorActivityBroadcastReceiver);
     }
 
-    private void fixTermuxActivityBroadcastReceiverIntent(Intent intent) {
+    private void fixLinuxLatorActivityBroadcastReceiverIntent(Intent intent) {
         if (intent == null) return;
 
         String extraReloadStyle = intent.getStringExtra(TERMUX_ACTIVITY.EXTRA_RELOAD_STYLE);
@@ -938,18 +938,18 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         }
     }
 
-    class TermuxActivityBroadcastReceiver extends BroadcastReceiver {
+    class LinuxLatorActivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent == null) return;
 
             if (mIsVisible) {
-                fixTermuxActivityBroadcastReceiverIntent(intent);
+                fixLinuxLatorActivityBroadcastReceiverIntent(intent);
 
                 switch (intent.getAction()) {
                     case TERMUX_ACTIVITY.ACTION_NOTIFY_APP_CRASH:
                         Logger.logDebug(LOG_TAG, "Received intent to notify app crash");
-                        TermuxCrashUtils.notifyAppCrashFromCrashLogFile(context, LOG_TAG);
+                        LinuxLatorCrashUtils.notifyAppCrashFromCrashLogFile(context, LOG_TAG);
                         return;
                     case TERMUX_ACTIVITY.ACTION_RELOAD_STYLE:
                         Logger.logDebug(LOG_TAG, "Received intent to reload styling");
@@ -971,11 +971,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
             if (mExtraKeysView != null) {
                 mExtraKeysView.setButtonTextAllCaps(mProperties.shouldExtraKeysTextBeAllCaps());
-                mExtraKeysView.reload(mTermuxTerminalExtraKeys.getExtraKeysInfo(), mTerminalToolbarDefaultHeight);
+                mExtraKeysView.reload(mLinuxLatorTerminalExtraKeys.getExtraKeysInfo(), mTerminalToolbarDefaultHeight);
             }
 
             // Update NightMode.APP_NIGHT_MODE
-            TermuxThemeUtils.setAppNightMode(mProperties.getNightMode());
+            LinuxLatorThemeUtils.setAppNightMode(mProperties.getNightMode());
         }
 
         setMargins();
@@ -983,29 +983,29 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
 
         FileReceiverActivity.updateFileReceiverActivityComponentsState(this);
 
-        if (mTermuxTerminalSessionActivityClient != null)
-            mTermuxTerminalSessionActivityClient.onReloadActivityStyling();
+        if (mLinuxLatorTerminalSessionActivityClient != null)
+            mLinuxLatorTerminalSessionActivityClient.onReloadActivityStyling();
 
-        if (mTermuxTerminalViewClient != null)
-            mTermuxTerminalViewClient.onReloadActivityStyling();
+        if (mLinuxLatorTerminalViewClient != null)
+            mLinuxLatorTerminalViewClient.onReloadActivityStyling();
 
         // To change the activity and drawer theme, activity needs to be recreated.
         // It will destroy the activity, including all stored variables and views, and onCreate()
         // will be called again. Extra keys input text, terminal sessions and transcripts will be preserved.
         if (recreateActivity) {
             Logger.logDebug(LOG_TAG, "Recreating activity");
-            TermuxActivity.this.recreate();
+            LinuxLatorActivity.this.recreate();
         }
     }
 
 
 
-    public static void startTermuxActivity(@NonNull final Context context) {
+    public static void startLinuxLatorActivity(@NonNull final Context context) {
         ActivityUtils.startActivity(context, newInstance(context));
     }
 
     public static Intent newInstance(@NonNull final Context context) {
-        Intent intent = new Intent(context, TermuxActivity.class);
+        Intent intent = new Intent(context, LinuxLatorActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }

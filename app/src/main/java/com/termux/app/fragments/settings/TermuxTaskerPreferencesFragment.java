@@ -9,10 +9,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxTaskerAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorTaskerAppSharedPreferences;
 
 @Keep
-public class TermuxTaskerPreferencesFragment extends PreferenceFragmentCompat {
+public class LinuxLatorTaskerPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -20,28 +20,28 @@ public class TermuxTaskerPreferencesFragment extends PreferenceFragmentCompat {
         if (context == null) return;
 
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setPreferenceDataStore(TermuxTaskerPreferencesDataStore.getInstance(context));
+        preferenceManager.setPreferenceDataStore(LinuxLatorTaskerPreferencesDataStore.getInstance(context));
 
         setPreferencesFromResource(R.xml.termux_tasker_preferences, rootKey);
     }
 
 }
 
-class TermuxTaskerPreferencesDataStore extends PreferenceDataStore {
+class LinuxLatorTaskerPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxTaskerAppSharedPreferences mPreferences;
+    private final LinuxLatorTaskerAppSharedPreferences mPreferences;
 
-    private static TermuxTaskerPreferencesDataStore mInstance;
+    private static LinuxLatorTaskerPreferencesDataStore mInstance;
 
-    private TermuxTaskerPreferencesDataStore(Context context) {
+    private LinuxLatorTaskerPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxTaskerAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorTaskerAppSharedPreferences.build(context, true);
     }
 
-    public static synchronized TermuxTaskerPreferencesDataStore getInstance(Context context) {
+    public static synchronized LinuxLatorTaskerPreferencesDataStore getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new TermuxTaskerPreferencesDataStore(context);
+            mInstance = new LinuxLatorTaskerPreferencesDataStore(context);
         }
         return mInstance;
     }

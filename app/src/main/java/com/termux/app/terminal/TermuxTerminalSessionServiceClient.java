@@ -4,26 +4,26 @@ import android.app.Service;
 
 import androidx.annotation.NonNull;
 
-import com.termux.app.TermuxService;
-import com.termux.shared.termux.shell.command.runner.terminal.TermuxSession;
-import com.termux.shared.termux.terminal.TermuxTerminalSessionClientBase;
+import com.termux.app.LinuxLatorService;
+import com.termux.shared.termux.shell.command.runner.terminal.LinuxLatorSession;
+import com.termux.shared.termux.terminal.LinuxLatorTerminalSessionClientBase;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
 
 /** The {@link TerminalSessionClient} implementation that may require a {@link Service} for its interface methods. */
-public class TermuxTerminalSessionServiceClient extends TermuxTerminalSessionClientBase {
+public class LinuxLatorTerminalSessionServiceClient extends LinuxLatorTerminalSessionClientBase {
 
-    private static final String LOG_TAG = "TermuxTerminalSessionServiceClient";
+    private static final String LOG_TAG = "LinuxLatorTerminalSessionServiceClient";
 
-    private final TermuxService mService;
+    private final LinuxLatorService mService;
 
-    public TermuxTerminalSessionServiceClient(TermuxService service) {
+    public LinuxLatorTerminalSessionServiceClient(LinuxLatorService service) {
         this.mService = service;
     }
 
     @Override
     public void setTerminalShellPid(@NonNull TerminalSession terminalSession, int pid) {
-        TermuxSession termuxSession = mService.getTermuxSessionForTerminalSession(terminalSession);
+        LinuxLatorSession termuxSession = mService.getLinuxLatorSessionForTerminalSession(terminalSession);
         if (termuxSession != null)
             termuxSession.getExecutionCommand().mPid = pid;
     }

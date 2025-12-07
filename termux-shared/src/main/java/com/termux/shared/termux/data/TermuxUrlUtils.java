@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TermuxUrlUtils {
+public class LinuxLatorUrlUtils {
 
     public static Pattern URL_MATCH_REGEX;
 

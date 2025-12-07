@@ -9,10 +9,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxWidgetAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorWidgetAppSharedPreferences;
 
 @Keep
-public class TermuxWidgetPreferencesFragment extends PreferenceFragmentCompat {
+public class LinuxLatorWidgetPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -20,28 +20,28 @@ public class TermuxWidgetPreferencesFragment extends PreferenceFragmentCompat {
         if (context == null) return;
 
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setPreferenceDataStore(TermuxWidgetPreferencesDataStore.getInstance(context));
+        preferenceManager.setPreferenceDataStore(LinuxLatorWidgetPreferencesDataStore.getInstance(context));
 
         setPreferencesFromResource(R.xml.termux_widget_preferences, rootKey);
     }
 
 }
 
-class TermuxWidgetPreferencesDataStore extends PreferenceDataStore {
+class LinuxLatorWidgetPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxWidgetAppSharedPreferences mPreferences;
+    private final LinuxLatorWidgetAppSharedPreferences mPreferences;
 
-    private static TermuxWidgetPreferencesDataStore mInstance;
+    private static LinuxLatorWidgetPreferencesDataStore mInstance;
 
-    private TermuxWidgetPreferencesDataStore(Context context) {
+    private LinuxLatorWidgetPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxWidgetAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorWidgetAppSharedPreferences.build(context, true);
     }
 
-    public static synchronized TermuxWidgetPreferencesDataStore getInstance(Context context) {
+    public static synchronized LinuxLatorWidgetPreferencesDataStore getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new TermuxWidgetPreferencesDataStore(context);
+            mInstance = new LinuxLatorWidgetPreferencesDataStore(context);
         }
         return mInstance;
     }

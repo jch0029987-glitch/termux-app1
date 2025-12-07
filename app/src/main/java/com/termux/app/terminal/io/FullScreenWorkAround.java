@@ -4,10 +4,10 @@ import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.termux.app.TermuxActivity;
+import com.termux.app.LinuxLatorActivity;
 
 /**
- * Work around for fullscreen mode in Termux to fix ExtraKeysView not being visible.
+ * Work around for fullscreen mode in LinuxLator to fix ExtraKeysView not being visible.
  * This class is derived from:
  * https://stackoverflow.com/questions/7417123/android-how-to-adjust-layout-in-full-screen-mode-when-softkeyboard-is-visible
  * and has some additional tweaks
@@ -22,11 +22,11 @@ public class FullScreenWorkAround {
     private final int mNavBarHeight;
 
 
-    public static void apply(TermuxActivity activity) {
+    public static void apply(LinuxLatorActivity activity) {
         new FullScreenWorkAround(activity);
     }
 
-    private FullScreenWorkAround(TermuxActivity activity) {
+    private FullScreenWorkAround(LinuxLatorActivity activity) {
         ViewGroup content = activity.findViewById(android.R.id.content);
         mChildOfContent = content.getChildAt(0);
         mViewGroupLayoutParams = mChildOfContent.getLayoutParams();

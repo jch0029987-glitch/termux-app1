@@ -25,7 +25,7 @@ public class ExecutionCommand {
     The {@link ExecutionState#SUCCESS} and {@link ExecutionState#FAILED} is defined based on
     successful execution of command without any internal errors or exceptions being raised.
     The shell command {@link #exitCode} being non-zero **does not** mean that execution command failed.
-    Only the {@link #errCode} being non-zero means that execution command failed from the Termux app
+    Only the {@link #errCode} being non-zero means that execution command failed from the LinuxLator app
     perspective.
     */
 
@@ -210,7 +210,7 @@ public class ExecutionCommand {
     public String commandHelp;
 
 
-    /** Defines the markdown text for the help of the Termux plugin API that was used to start the
+    /** Defines the markdown text for the help of the LinuxLator plugin API that was used to start the
      * {@link ExecutionCommand}. This can be used to provide useful info to the user if an internal
      * error is raised. */
     public String pluginAPIHelp;
@@ -220,7 +220,7 @@ public class ExecutionCommand {
     public Intent commandIntent;
 
     /** Defines if {@link ExecutionCommand} was started because of an external plugin request
-     * like with an intent or from within Termux app itself. */
+     * like with an intent or from within LinuxLator app itself. */
     public boolean isPluginExecutionCommand;
 
     /** Defines the {@link ResultConfig} for the {@link ExecutionCommand} containing information

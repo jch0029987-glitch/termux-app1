@@ -13,13 +13,13 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
-import com.termux.shared.termux.plugins.TermuxPluginUtils;
+import com.termux.shared.termux.plugins.LinuxLatorPluginUtils;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.data.IntentUtils;
 import com.termux.shared.net.uri.UriUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.net.uri.UriScheme;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorConstants;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,9 +27,9 @@ import java.io.IOException;
 
 import androidx.annotation.NonNull;
 
-public class TermuxOpenReceiver extends BroadcastReceiver {
+public class LinuxLatorOpenReceiver extends BroadcastReceiver {
 
-    private static final String LOG_TAG = "TermuxOpenReceiver";
+    private static final String LOG_TAG = "LinuxLatorOpenReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -104,7 +104,7 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
         }
 
         // Do not create Uri with Uri.parse() and use Uri.Builder().path(), check UriUtils.getUriFilePath().
-        Uri uriToShare = UriUtils.getContentUri(TermuxConstants.TERMUX_FILE_SHARE_URI_AUTHORITY, fileToShare.getAbsolutePath());
+        Uri uriToShare = UriUtils.getContentUri(LinuxLatorConstants.TERMUX_FILE_SHARE_URI_AUTHORITY, fileToShare.getAbsolutePath());
 
         if (Intent.ACTION_SEND.equals(intentAction)) {
             sendIntent.putExtra(Intent.EXTRA_STREAM, uriToShare);
@@ -126,7 +126,7 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
 
     public static class ContentProvider extends android.content.ContentProvider {
 
-        private static final String LOG_TAG = "TermuxContentProvider";
+        private static final String LOG_TAG = "LinuxLatorContentProvider";
 
         @Override
         public boolean onCreate() {
@@ -206,21 +206,21 @@ public class TermuxOpenReceiver extends BroadcastReceiver {
                 Logger.logDebug(LOG_TAG, "Open file request received from " + callingPackageName + " for \"" + path + "\" with mode \"" + mode + "\"");
                 String storagePath = Environment.getExternalStorageDirectory().getCanonicalPath();
                 // See https://support.google.com/faqs/answer/7496913:
-                if (!(path.startsWith(TermuxConstants.TERMUX_FILES_DIR_PATH) || path.startsWith(storagePath))) {
+                if (!(path.startsWith(LinuxLatorConstants.TERMUX_FILES_DIR_PATH) || path.startsWith(storagePath))) {
                     throw new IllegalArgumentException("Invalid path: " + path);
                 }
 
-                // If TermuxConstants.PROP_ALLOW_EXTERNAL_APPS property to not set to "true", then throw exception
-                String errmsg = TermuxPluginUtils.checkIfAllowExternalAppsPolicyIsViolated(getContext(), LOG_TAG);
+                // If LinuxLatorConstants.PROP_ALLOW_EXTERNAL_APPS property to not set to "true", then throw exception
+                String errmsg = LinuxLatorPluginUtils.checkIfAllowExternalAppsPolicyIsViolated(getContext(), LOG_TAG);
                 if (errmsg != null) {
                     throw new IllegalArgumentException(errmsg);
                 }
 
                 // **DO NOT** allow these files to be modified by ContentProvider exposed to external
                 // apps, since they may silently modify the values for security properties like
-                // TermuxConstants.PROP_ALLOW_EXTERNAL_APPS set by users without their explicit consent.
-                if (TermuxConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST.contains(path) ||
-                    TermuxConstants.TERMUX_FLOAT_PROPERTIES_FILE_PATHS_LIST.contains(path)) {
+                // LinuxLatorConstants.PROP_ALLOW_EXTERNAL_APPS set by users without their explicit consent.
+                if (LinuxLatorConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST.contains(path) ||
+                    LinuxLatorConstants.TERMUX_FLOAT_PROPERTIES_FILE_PATHS_LIST.contains(path)) {
                     mode = "r";
                 }
 

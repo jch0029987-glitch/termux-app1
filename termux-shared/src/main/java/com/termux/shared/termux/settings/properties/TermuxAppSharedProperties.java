@@ -4,28 +4,28 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorConstants;
 
-public class TermuxAppSharedProperties extends TermuxSharedProperties {
+public class LinuxLatorAppSharedProperties extends LinuxLatorSharedProperties {
 
-    private static TermuxAppSharedProperties properties;
+    private static LinuxLatorAppSharedProperties properties;
 
 
-    private TermuxAppSharedProperties(@NonNull Context context) {
-        super(context, TermuxConstants.TERMUX_APP_NAME,
-            TermuxConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST, TermuxPropertyConstants.TERMUX_APP_PROPERTIES_LIST,
-            new TermuxSharedProperties.SharedPropertiesParserClient());
+    private LinuxLatorAppSharedProperties(@NonNull Context context) {
+        super(context, LinuxLatorConstants.TERMUX_APP_NAME,
+            LinuxLatorConstants.TERMUX_PROPERTIES_FILE_PATHS_LIST, LinuxLatorPropertyConstants.TERMUX_APP_PROPERTIES_LIST,
+            new LinuxLatorSharedProperties.SharedPropertiesParserClient());
     }
 
     /**
      * Initialize the {@link #properties} and load properties from disk.
      *
      * @param context The {@link Context} for operations.
-     * @return Returns the {@link TermuxAppSharedProperties}.
+     * @return Returns the {@link LinuxLatorAppSharedProperties}.
      */
-    public static TermuxAppSharedProperties init(@NonNull Context context) {
+    public static LinuxLatorAppSharedProperties init(@NonNull Context context) {
         if (properties == null)
-            properties = new TermuxAppSharedProperties(context);
+            properties = new LinuxLatorAppSharedProperties(context);
 
         return properties;
     }
@@ -33,9 +33,9 @@ public class TermuxAppSharedProperties extends TermuxSharedProperties {
     /**
      * Get the {@link #properties}.
      *
-     * @return Returns the {@link TermuxAppSharedProperties}.
+     * @return Returns the {@link LinuxLatorAppSharedProperties}.
      */
-    public static TermuxAppSharedProperties getProperties() {
+    public static LinuxLatorAppSharedProperties getProperties() {
         return properties;
     }
 

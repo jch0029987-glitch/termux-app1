@@ -16,13 +16,13 @@ import com.termux.shared.models.ReportInfo;
 import com.termux.app.models.UserAction;
 import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.android.PackageUtils;
-import com.termux.shared.termux.settings.preferences.TermuxAPIAppSharedPreferences;
-import com.termux.shared.termux.settings.preferences.TermuxFloatAppSharedPreferences;
-import com.termux.shared.termux.settings.preferences.TermuxTaskerAppSharedPreferences;
-import com.termux.shared.termux.settings.preferences.TermuxWidgetAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorAPIAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorFloatAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorTaskerAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorWidgetAppSharedPreferences;
 import com.termux.shared.android.AndroidUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
 import com.termux.shared.activity.media.AppCompatActivityUtils;
 import com.termux.shared.theme.NightMode;
 
@@ -63,47 +63,47 @@ public class SettingsActivity extends AppCompatActivity {
             new Thread() {
                 @Override
                 public void run() {
-                    configureTermuxAPIPreference(context);
-                    configureTermuxFloatPreference(context);
-                    configureTermuxTaskerPreference(context);
-                    configureTermuxWidgetPreference(context);
+                    configureLinuxLatorAPIPreference(context);
+                    configureLinuxLatorFloatPreference(context);
+                    configureLinuxLatorTaskerPreference(context);
+                    configureLinuxLatorWidgetPreference(context);
                     configureAboutPreference(context);
                     configureDonatePreference(context);
                 }
             }.start();
         }
 
-        private void configureTermuxAPIPreference(@NonNull Context context) {
+        private void configureLinuxLatorAPIPreference(@NonNull Context context) {
             Preference termuxAPIPreference = findPreference("termux_api");
             if (termuxAPIPreference != null) {
-                TermuxAPIAppSharedPreferences preferences = TermuxAPIAppSharedPreferences.build(context, false);
+                LinuxLatorAPIAppSharedPreferences preferences = LinuxLatorAPIAppSharedPreferences.build(context, false);
                 // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxAPIPreference.setVisible(preferences != null);
             }
         }
 
-        private void configureTermuxFloatPreference(@NonNull Context context) {
+        private void configureLinuxLatorFloatPreference(@NonNull Context context) {
             Preference termuxFloatPreference = findPreference("termux_float");
             if (termuxFloatPreference != null) {
-                TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, false);
+                LinuxLatorFloatAppSharedPreferences preferences = LinuxLatorFloatAppSharedPreferences.build(context, false);
                 // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxFloatPreference.setVisible(preferences != null);
             }
         }
 
-        private void configureTermuxTaskerPreference(@NonNull Context context) {
+        private void configureLinuxLatorTaskerPreference(@NonNull Context context) {
             Preference termuxTaskerPreference = findPreference("termux_tasker");
             if (termuxTaskerPreference != null) {
-                TermuxTaskerAppSharedPreferences preferences = TermuxTaskerAppSharedPreferences.build(context, false);
+                LinuxLatorTaskerAppSharedPreferences preferences = LinuxLatorTaskerAppSharedPreferences.build(context, false);
                 // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxTaskerPreference.setVisible(preferences != null);
             }
         }
 
-        private void configureTermuxWidgetPreference(@NonNull Context context) {
+        private void configureLinuxLatorWidgetPreference(@NonNull Context context) {
             Preference termuxWidgetPreference = findPreference("termux_widget");
             if (termuxWidgetPreference != null) {
-                TermuxWidgetAppSharedPreferences preferences = TermuxWidgetAppSharedPreferences.build(context, false);
+                LinuxLatorWidgetAppSharedPreferences preferences = LinuxLatorWidgetAppSharedPreferences.build(context, false);
                 // If failed to get app preferences, then likely app is not installed, so do not show its preference
                 termuxWidgetPreference.setVisible(preferences != null);
             }
@@ -119,18 +119,18 @@ public class SettingsActivity extends AppCompatActivity {
                             String title = "About";
 
                             StringBuilder aboutString = new StringBuilder();
-                            aboutString.append(TermuxUtils.getAppInfoMarkdownString(context, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES));
+                            aboutString.append(LinuxLatorUtils.getAppInfoMarkdownString(context, LinuxLatorUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES));
                             aboutString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(context, true));
-                            aboutString.append("\n\n").append(TermuxUtils.getImportantLinksMarkdownString(context));
+                            aboutString.append("\n\n").append(LinuxLatorUtils.getImportantLinksMarkdownString(context));
 
                             String userActionName = UserAction.ABOUT.getName();
 
                             ReportInfo reportInfo = new ReportInfo(userActionName,
-                                TermuxConstants.TERMUX_APP.TERMUX_SETTINGS_ACTIVITY_NAME, title);
+                                LinuxLatorConstants.TERMUX_APP.TERMUX_SETTINGS_ACTIVITY_NAME, title);
                             reportInfo.setReportString(aboutString.toString());
                             reportInfo.setReportSaveFileLabelAndPath(userActionName,
                                 Environment.getExternalStorageDirectory() + "/" +
-                                    FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true));
+                                    FileUtils.sanitizeFileName(LinuxLatorConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true));
 
                             ReportActivity.startReportActivity(context, reportInfo);
                         }
@@ -147,10 +147,10 @@ public class SettingsActivity extends AppCompatActivity {
                 String signingCertificateSHA256Digest = PackageUtils.getSigningCertificateSHA256DigestForPackage(context);
                 if (signingCertificateSHA256Digest != null) {
                     // If APK is a Google Playstore release, then do not show the donation link
-                    // since Termux isn't exempted from the playstore policy donation links restriction
+                    // since LinuxLator isn't exempted from the playstore policy donation links restriction
                     // Check Fund solicitations: https://pay.google.com/intl/en_in/about/policy/
-                    String apkRelease = TermuxUtils.getAPKRelease(signingCertificateSHA256Digest);
-                    if (apkRelease == null || apkRelease.equals(TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST)) {
+                    String apkRelease = LinuxLatorUtils.getAPKRelease(signingCertificateSHA256Digest);
+                    if (apkRelease == null || apkRelease.equals(LinuxLatorConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST)) {
                         donatePreference.setVisible(false);
                         return;
                     } else {
@@ -159,7 +159,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 donatePreference.setOnPreferenceClickListener(preference -> {
-                    ShareUtils.openUrl(context, TermuxConstants.TERMUX_DONATE_URL);
+                    ShareUtils.openUrl(context, LinuxLatorConstants.TERMUX_DONATE_URL);
                     return true;
                 });
             }

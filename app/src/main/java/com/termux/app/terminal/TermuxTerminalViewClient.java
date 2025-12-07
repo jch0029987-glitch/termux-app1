@@ -18,26 +18,26 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.termux.R;
-import com.termux.app.TermuxActivity;
+import com.termux.app.LinuxLatorActivity;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.shell.ShellUtils;
-import com.termux.shared.termux.TermuxBootstrap;
-import com.termux.shared.termux.terminal.TermuxTerminalViewClientBase;
+import com.termux.shared.termux.LinuxLatorBootstrap;
+import com.termux.shared.termux.terminal.LinuxLatorTerminalViewClientBase;
 import com.termux.shared.termux.extrakeys.SpecialButton;
 import com.termux.shared.android.AndroidUtils;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorConstants;
 import com.termux.shared.activities.ReportActivity;
 import com.termux.shared.models.ReportInfo;
 import com.termux.app.models.UserAction;
 import com.termux.app.terminal.io.KeyboardShortcut;
-import com.termux.shared.termux.settings.properties.TermuxPropertyConstants;
+import com.termux.shared.termux.settings.properties.LinuxLatorPropertyConstants;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.data.TermuxUrlUtils;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.data.LinuxLatorUrlUtils;
 import com.termux.shared.view.KeyboardUtils;
 import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.KeyHandler;
@@ -53,11 +53,11 @@ import java.util.Map;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
-public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
+public class LinuxLatorTerminalViewClient extends LinuxLatorTerminalViewClientBase {
 
-    final TermuxActivity mActivity;
+    final LinuxLatorActivity mActivity;
 
-    final TermuxTerminalSessionActivityClient mTermuxTerminalSessionActivityClient;
+    final LinuxLatorTerminalSessionActivityClient mLinuxLatorTerminalSessionActivityClient;
 
     /** Keeping track of the special keys acting as Ctrl and Fn for the soft keyboard and other hardware keys. */
     boolean mVirtualControlKeyDown, mVirtualFnKeyDown;
@@ -71,14 +71,14 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     private List<KeyboardShortcut> mSessionShortcuts;
 
-    private static final String LOG_TAG = "TermuxTerminalViewClient";
+    private static final String LOG_TAG = "LinuxLatorTerminalViewClient";
 
-    public TermuxTerminalViewClient(TermuxActivity activity, TermuxTerminalSessionActivityClient termuxTerminalSessionActivityClient) {
+    public LinuxLatorTerminalViewClient(LinuxLatorActivity activity, LinuxLatorTerminalSessionActivityClient termuxTerminalSessionActivityClient) {
         this.mActivity = activity;
-        this.mTermuxTerminalSessionActivityClient = termuxTerminalSessionActivityClient;
+        this.mLinuxLatorTerminalSessionActivityClient = termuxTerminalSessionActivityClient;
     }
 
-    public TermuxActivity getActivity() {
+    public LinuxLatorActivity getActivity() {
         return mActivity;
     }
 
@@ -97,12 +97,12 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
      */
     public void onStart() {
         // Set {@link TerminalView#TERMINAL_VIEW_KEY_LOGGING_ENABLED} value
-        // Also required if user changed the preference from {@link TermuxSettings} activity and returns
+        // Also required if user changed the preference from {@link LinuxLatorSettings} activity and returns
         boolean isTerminalViewKeyLoggingEnabled = mActivity.getPreferences().isTerminalViewKeyLoggingEnabled();
         mActivity.getTerminalView().setIsTerminalViewKeyLoggingEnabled(isTerminalViewKeyLoggingEnabled);
 
         // Piggyback on the terminal view key logging toggle for now, should add a separate toggle in future
-        mActivity.getTermuxActivityRootView().setIsRootViewLoggingEnabled(isTerminalViewKeyLoggingEnabled);
+        mActivity.getLinuxLatorActivityRootView().setIsRootViewLoggingEnabled(isTerminalViewKeyLoggingEnabled);
         ViewUtils.setIsViewUtilsLoggingEnabled(isTerminalViewKeyLoggingEnabled);
     }
 
@@ -119,7 +119,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             // Start terminal cursor blinking if enabled
             // If emulator is already set, then start blinker now, otherwise wait for onEmulatorSet()
             // event to start it. This is needed since onEmulatorSet() may not be called after
-            // TermuxActivity is started after device display timeout with double tap and not power button.
+            // LinuxLatorActivity is started after device display timeout with double tap and not power button.
             setTerminalCursorBlinkerState(true);
             mTerminalCursorBlinkerStateAlreadySet = true;
         }
@@ -159,9 +159,9 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         if (!mTerminalCursorBlinkerStateAlreadySet) {
             // Start terminal cursor blinking if enabled
             // We need to wait for the first session to be attached that's set in
-            // TermuxActivity.onServiceConnected() and then the multiple calls to TerminalView.updateSize()
+            // LinuxLatorActivity.onServiceConnected() and then the multiple calls to TerminalView.updateSize()
             // where the final one eventually sets the mEmulator when width/height is not 0. Otherwise
-            // blinker will not start again if TermuxActivity is started again after exiting it with
+            // blinker will not start again if LinuxLatorActivity is started again after exiting it with
             // double back press. Check TerminalView.setTerminalCursorBlinkerState().
             setTerminalCursorBlinkerState(true);
             mTerminalCursorBlinkerStateAlreadySet = true;
@@ -189,7 +189,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         if (mActivity.getProperties().shouldOpenTerminalTranscriptURLOnClick()) {
             int[] columnAndRow = mActivity.getTerminalView().getColumnAndRow(e, true);
             String wordAtTap = term.getScreen().getWordAtLocation(columnAndRow[0], columnAndRow[1]);
-            LinkedHashSet<CharSequence> urlSet = TermuxUrlUtils.extractUrls(wordAtTap);
+            LinkedHashSet<CharSequence> urlSet = LinuxLatorUrlUtils.extractUrls(wordAtTap);
 
             if (!urlSet.isEmpty()) {
                 String url = (String) urlSet.iterator().next();
@@ -242,7 +242,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         if (handleVirtualKeys(keyCode, e, true)) return true;
 
         if (keyCode == KeyEvent.KEYCODE_ENTER && !currentSession.isRunning()) {
-            mTermuxTerminalSessionActivityClient.removeFinishedSession(currentSession);
+            mLinuxLatorTerminalSessionActivityClient.removeFinishedSession(currentSession);
             return true;
         } else if (!mActivity.getProperties().areHardwareKeyboardShortcutsDisabled() &&
             e.isCtrlPressed() && e.isAltPressed()) {
@@ -250,9 +250,9 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             int unicodeChar = e.getUnicodeChar(0);
 
             if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || unicodeChar == 'n'/* next */) {
-                mTermuxTerminalSessionActivityClient.switchToSession(true);
+                mLinuxLatorTerminalSessionActivityClient.switchToSession(true);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || unicodeChar == 'p' /* previous */) {
-                mTermuxTerminalSessionActivityClient.switchToSession(false);
+                mLinuxLatorTerminalSessionActivityClient.switchToSession(false);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 mActivity.getDrawer().openDrawer(Gravity.LEFT);
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -262,9 +262,9 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             } else if (unicodeChar == 'm'/* menu */) {
                 mActivity.getTerminalView().showContextMenu();
             } else if (unicodeChar == 'r'/* rename */) {
-                mTermuxTerminalSessionActivityClient.renameSession(currentSession);
+                mLinuxLatorTerminalSessionActivityClient.renameSession(currentSession);
             } else if (unicodeChar == 'c'/* create */) {
-                mTermuxTerminalSessionActivityClient.addNewSession(false, null);
+                mLinuxLatorTerminalSessionActivityClient.addNewSession(false, null);
             } else if (unicodeChar == 'u' /* urls */) {
                 showUrlSelection();
             } else if (unicodeChar == 'v') {
@@ -277,7 +277,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                 changeFontSize(false);
             } else if (unicodeChar >= '1' && unicodeChar <= '9') {
                 int index = unicodeChar - '1';
-                mTermuxTerminalSessionActivityClient.switchToSession(index);
+                mLinuxLatorTerminalSessionActivityClient.switchToSession(index);
             }
             return true;
         }
@@ -461,7 +461,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             return true;
         } else if (ctrlDown) {
             if (codePoint == 106 /* Ctrl+j or \n */ && !session.isRunning()) {
-                mTermuxTerminalSessionActivityClient.removeFinishedSession(session);
+                mLinuxLatorTerminalSessionActivityClient.removeFinishedSession(session);
                 return true;
             }
 
@@ -472,17 +472,17 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                     KeyboardShortcut shortcut = shortcuts.get(i);
                     if (codePointLowerCase == shortcut.codePoint) {
                         switch (shortcut.shortcutAction) {
-                            case TermuxPropertyConstants.ACTION_SHORTCUT_CREATE_SESSION:
-                                mTermuxTerminalSessionActivityClient.addNewSession(false, null);
+                            case LinuxLatorPropertyConstants.ACTION_SHORTCUT_CREATE_SESSION:
+                                mLinuxLatorTerminalSessionActivityClient.addNewSession(false, null);
                                 return true;
-                            case TermuxPropertyConstants.ACTION_SHORTCUT_NEXT_SESSION:
-                                mTermuxTerminalSessionActivityClient.switchToSession(true);
+                            case LinuxLatorPropertyConstants.ACTION_SHORTCUT_NEXT_SESSION:
+                                mLinuxLatorTerminalSessionActivityClient.switchToSession(true);
                                 return true;
-                            case TermuxPropertyConstants.ACTION_SHORTCUT_PREVIOUS_SESSION:
-                                mTermuxTerminalSessionActivityClient.switchToSession(false);
+                            case LinuxLatorPropertyConstants.ACTION_SHORTCUT_PREVIOUS_SESSION:
+                                mLinuxLatorTerminalSessionActivityClient.switchToSession(false);
                                 return true;
-                            case TermuxPropertyConstants.ACTION_SHORTCUT_RENAME_SESSION:
-                                mTermuxTerminalSessionActivityClient.renameSession(mActivity.getCurrentSession());
+                            case LinuxLatorPropertyConstants.ACTION_SHORTCUT_RENAME_SESSION:
+                                mLinuxLatorTerminalSessionActivityClient.renameSession(mActivity.getCurrentSession());
                                 return true;
                         }
                     }
@@ -499,8 +499,8 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
     private void setSessionShortcuts() {
         mSessionShortcuts = new ArrayList<>();
 
-        // The {@link TermuxPropertyConstants#MAP_SESSION_SHORTCUTS} stores the session shortcut key and action pair
-        for (Map.Entry<String, Integer> entry : TermuxPropertyConstants.MAP_SESSION_SHORTCUTS.entrySet()) {
+        // The {@link LinuxLatorPropertyConstants#MAP_SESSION_SHORTCUTS} stores the session shortcut key and action pair
+        for (Map.Entry<String, Integer> entry : LinuxLatorPropertyConstants.MAP_SESSION_SHORTCUTS.entrySet()) {
             // The mMap stores the code points for the session shortcuts while loading properties
             Integer codePoint = (Integer) mActivity.getProperties().getInternalPropertyValue(entry.getKey(), true);
             // If codePoint is null, then session shortcut did not exist in properties or was invalid
@@ -553,7 +553,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         }
         // If soft keyboard toggle behaviour is show/hide
         else {
-            // If soft keyboard is disabled by user for Termux
+            // If soft keyboard is disabled by user for LinuxLator
             if (!mActivity.getPreferences().isSoftKeyboardEnabled()) {
                 Logger.logVerbose(LOG_TAG, "Maintaining disabled soft keyboard on toggle");
                 KeyboardUtils.disableSoftKeyboard(mActivity, mActivity.getTerminalView());
@@ -565,7 +565,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         }
     }
 
-    public void setSoftKeyboardState(boolean isStartup, boolean isReloadTermuxProperties) {
+    public void setSoftKeyboardState(boolean isStartup, boolean isReloadLinuxLatorProperties) {
         boolean noShowKeyboard = false;
 
         // Requesting terminal view focus is necessary regardless of if soft keyboard is to be
@@ -575,7 +575,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         // theme. For android 8.+, the "defaultFocusHighlightEnabled" attribute is also set to false
         // in TerminalView layout to fix the issue.
 
-        // If soft keyboard is disabled by user for Termux (check function docs for Termux behaviour info)
+        // If soft keyboard is disabled by user for LinuxLator (check function docs for LinuxLator behaviour info)
         if (KeyboardUtils.shouldSoftKeyboardBeDisabled(mActivity,
             mActivity.getPreferences().isSoftKeyboardEnabled(),
             mActivity.getPreferences().isSoftKeyboardEnabledOnlyIfNoHardware())) {
@@ -583,8 +583,8 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             KeyboardUtils.disableSoftKeyboard(mActivity, mActivity.getTerminalView());
             mActivity.getTerminalView().requestFocus();
             noShowKeyboard = true;
-            // Delay is only required if onCreate() is called like when Termux app is exited with
-            // double back press, not when Termux app is switched back from another app and keyboard
+            // Delay is only required if onCreate() is called like when LinuxLator app is exited with
+            // double back press, not when LinuxLator app is switched back from another app and keyboard
             // toggle is pressed to enable keyboard
             if (isStartup && mActivity.isOnResumeAfterOnCreate())
                 mShowSoftKeyboardWithDelayOnce = true;
@@ -598,7 +598,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             // If soft keyboard is to be hidden on startup
             if (isStartup && mActivity.getProperties().shouldSoftKeyboardBeHiddenOnStartup()) {
                 Logger.logVerbose(LOG_TAG, "Hiding soft keyboard on startup");
-                // Required to keep keyboard hidden when Termux app is switched back from another app
+                // Required to keep keyboard hidden when LinuxLator app is switched back from another app
                 KeyboardUtils.setSoftKeyboardAlwaysHiddenFlags(mActivity);
 
                 KeyboardUtils.hideSoftKeyboard(mActivity, mActivity.getTerminalView());
@@ -633,11 +633,11 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
         // Do not force show soft keyboard if termux-reload-settings command was run with hardware keyboard
         // or soft keyboard is to be hidden or is disabled
-        if (!isReloadTermuxProperties && !noShowKeyboard) {
+        if (!isReloadLinuxLatorProperties && !noShowKeyboard) {
             // Request focus for TerminalView
             // Also show the keyboard, since onFocusChange will not be called if TerminalView already
             // had focus on startup to show the keyboard, like when opening url with context menu
-            // "Select URL" long press and returning to Termux app with back button. This
+            // "Select URL" long press and returning to LinuxLator app with back button. This
             // will also show keyboard even if it was closed before opening url. #2111
             Logger.logVerbose(LOG_TAG, "Requesting TerminalView focus and showing soft keyboard");
             mActivity.getTerminalView().requestFocus();
@@ -697,7 +697,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
         String text = ShellUtils.getTerminalSessionTranscriptText(session, true, true);
 
-        LinkedHashSet<CharSequence> urlSet = TermuxUrlUtils.extractUrls(text);
+        LinkedHashSet<CharSequence> urlSet = LinuxLatorUrlUtils.extractUrls(text);
         if (urlSet.isEmpty()) {
             new AlertDialog.Builder(mActivity).setMessage(R.string.title_select_url_none_found).show();
             return;
@@ -733,14 +733,14 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         final String transcriptText = ShellUtils.getTerminalSessionTranscriptText(session, false, true);
         if (transcriptText == null) return;
 
-        MessageDialogUtils.showMessage(mActivity, TermuxConstants.TERMUX_APP_NAME + " Report Issue",
+        MessageDialogUtils.showMessage(mActivity, LinuxLatorConstants.TERMUX_APP_NAME + " Report Issue",
             mActivity.getString(R.string.msg_add_termux_debug_info),
             mActivity.getString(R.string.action_yes), (dialog, which) -> reportIssueFromTranscript(transcriptText, true),
             mActivity.getString(R.string.action_no), (dialog, which) -> reportIssueFromTranscript(transcriptText, false),
             null);
     }
 
-    private void reportIssueFromTranscript(String transcriptText, boolean addTermuxDebugInfo) {
+    private void reportIssueFromTranscript(String transcriptText, boolean addLinuxLatorDebugInfo) {
         Logger.showToast(mActivity, mActivity.getString(R.string.msg_generating_report), true);
 
         new Thread() {
@@ -748,28 +748,28 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
             public void run() {
                 StringBuilder reportString = new StringBuilder();
 
-                String title = TermuxConstants.TERMUX_APP_NAME + " Report Issue";
+                String title = LinuxLatorConstants.TERMUX_APP_NAME + " Report Issue";
 
                 reportString.append("## Transcript\n");
                 reportString.append("\n").append(MarkdownUtils.getMarkdownCodeForString(transcriptText, true));
                 reportString.append("\n##\n");
 
-                if (addTermuxDebugInfo) {
-                    reportString.append("\n\n").append(TermuxUtils.getAppInfoMarkdownString(mActivity, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES));
+                if (addLinuxLatorDebugInfo) {
+                    reportString.append("\n\n").append(LinuxLatorUtils.getAppInfoMarkdownString(mActivity, LinuxLatorUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES));
                 } else {
-                    reportString.append("\n\n").append(TermuxUtils.getAppInfoMarkdownString(mActivity, TermuxUtils.AppInfoMode.TERMUX_PACKAGE));
+                    reportString.append("\n\n").append(LinuxLatorUtils.getAppInfoMarkdownString(mActivity, LinuxLatorUtils.AppInfoMode.TERMUX_PACKAGE));
                 }
 
                 reportString.append("\n\n").append(AndroidUtils.getDeviceInfoMarkdownString(mActivity, true));
 
-                if (TermuxBootstrap.isAppPackageManagerAPT()) {
-                    String termuxAptInfo = TermuxUtils.geAPTInfoMarkdownString(mActivity);
+                if (LinuxLatorBootstrap.isAppPackageManagerAPT()) {
+                    String termuxAptInfo = LinuxLatorUtils.geAPTInfoMarkdownString(mActivity);
                     if (termuxAptInfo != null)
                         reportString.append("\n\n").append(termuxAptInfo);
                 }
 
-                if (addTermuxDebugInfo) {
-                    String termuxDebugInfo = TermuxUtils.getTermuxDebugMarkdownString(mActivity);
+                if (addLinuxLatorDebugInfo) {
+                    String termuxDebugInfo = LinuxLatorUtils.getLinuxLatorDebugMarkdownString(mActivity);
                     if (termuxDebugInfo != null)
                         reportString.append("\n\n").append(termuxDebugInfo);
                 }
@@ -777,12 +777,12 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
                 String userActionName = UserAction.REPORT_ISSUE_FROM_TRANSCRIPT.getName();
 
                 ReportInfo reportInfo = new ReportInfo(userActionName,
-                    TermuxConstants.TERMUX_APP.TERMUX_ACTIVITY_NAME, title);
+                    LinuxLatorConstants.TERMUX_APP.TERMUX_ACTIVITY_NAME, title);
                 reportInfo.setReportString(reportString.toString());
-                reportInfo.setReportStringSuffix("\n\n" + TermuxUtils.getReportIssueMarkdownString(mActivity));
+                reportInfo.setReportStringSuffix("\n\n" + LinuxLatorUtils.getReportIssueMarkdownString(mActivity));
                 reportInfo.setReportSaveFileLabelAndPath(userActionName,
                     Environment.getExternalStorageDirectory() + "/" +
-                        FileUtils.sanitizeFileName(TermuxConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true));
+                        FileUtils.sanitizeFileName(LinuxLatorConstants.TERMUX_APP_NAME + "-" + userActionName + ".log", true, true));
 
                 ReportActivity.startReportActivity(mActivity, reportInfo);
             }

@@ -13,7 +13,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxFloatAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorFloatAppSharedPreferences;
 
 @Keep
 public class DebuggingPreferencesFragment extends PreferenceFragmentCompat {
@@ -37,7 +37,7 @@ public class DebuggingPreferencesFragment extends PreferenceFragmentCompat {
 
         ListPreference logLevelListPreference = findPreference("log_level");
         if (logLevelListPreference != null) {
-            TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, true);
+            LinuxLatorFloatAppSharedPreferences preferences = LinuxLatorFloatAppSharedPreferences.build(context, true);
             if (preferences == null) return;
 
             com.termux.app.fragments.settings.termux.DebuggingPreferencesFragment.
@@ -50,13 +50,13 @@ public class DebuggingPreferencesFragment extends PreferenceFragmentCompat {
 class DebuggingPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxFloatAppSharedPreferences mPreferences;
+    private final LinuxLatorFloatAppSharedPreferences mPreferences;
 
     private static DebuggingPreferencesDataStore mInstance;
 
     private DebuggingPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxFloatAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorFloatAppSharedPreferences.build(context, true);
     }
 
     public static synchronized DebuggingPreferencesDataStore getInstance(Context context) {

@@ -23,7 +23,7 @@ import com.termux.shared.file.FileUtils;
 import com.termux.shared.file.filesystem.FileType;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.errors.Error;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorConstants;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.models.ReportInfo;
@@ -39,7 +39,7 @@ import io.noties.markwon.recycler.SimpleEntry;
 /**
  * An activity to show reports in markdown format as per CommonMark spec based on config passed as {@link ReportInfo}.
  * Add Following to `AndroidManifest.xml` to use in an app:
- * {@code `<activity android:name="com.termux.shared.activities.ReportActivity" android:theme="@style/Theme.AppCompat.TermuxReportActivity" android:documentLaunchMode="intoExisting" />` }
+ * {@code `<activity android:name="com.termux.shared.activities.ReportActivity" android:theme="@style/Theme.AppCompat.LinuxLatorReportActivity" android:documentLaunchMode="intoExisting" />` }
  * and
  * {@code `<receiver android:name="com.termux.shared.activities.ReportActivity$ReportActivityBroadcastReceiver"  android:exported="false" />` }
  * Receiver **must not** be `exported="true"`!!!
@@ -150,7 +150,7 @@ public class ReportActivity extends AppCompatActivity {
             if (mReportInfo.reportTitle != null)
                 actionBar.setTitle(mReportInfo.reportTitle);
             else
-                actionBar.setTitle(TermuxConstants.TERMUX_APP_NAME + " App Report");
+                actionBar.setTitle(LinuxLatorConstants.TERMUX_APP_NAME + " App Report");
         }
 
 

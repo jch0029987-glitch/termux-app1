@@ -9,53 +9,53 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.settings.preferences.AppSharedPreferences;
 import com.termux.shared.settings.preferences.SharedPreferenceUtils;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.preferences.TermuxPreferenceConstants.TERMUX_BOOT_APP;
-import com.termux.shared.termux.TermuxConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.settings.preferences.LinuxLatorPreferenceConstants.TERMUX_BOOT_APP;
+import com.termux.shared.termux.LinuxLatorConstants;
 
-public class TermuxBootAppSharedPreferences extends AppSharedPreferences {
+public class LinuxLatorBootAppSharedPreferences extends AppSharedPreferences {
 
-    private static final String LOG_TAG = "TermuxBootAppSharedPreferences";
+    private static final String LOG_TAG = "LinuxLatorBootAppSharedPreferences";
 
-    private TermuxBootAppSharedPreferences(@NonNull Context context) {
+    private LinuxLatorBootAppSharedPreferences(@NonNull Context context) {
         super(context,
             SharedPreferenceUtils.getPrivateSharedPreferences(context,
-                TermuxConstants.TERMUX_BOOT_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
+                LinuxLatorConstants.TERMUX_BOOT_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION),
             SharedPreferenceUtils.getPrivateAndMultiProcessSharedPreferences(context,
-                TermuxConstants.TERMUX_BOOT_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
+                LinuxLatorConstants.TERMUX_BOOT_DEFAULT_PREFERENCES_FILE_BASENAME_WITHOUT_EXTENSION));
     }
 
     /**
-     * Get {@link TermuxBootAppSharedPreferences}.
+     * Get {@link LinuxLatorBootAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_BOOT_PACKAGE_NAME}.
-     * @return Returns the {@link TermuxBootAppSharedPreferences}. This will {@code null} if an exception is raised.
+     *                {@link LinuxLatorConstants#TERMUX_BOOT_PACKAGE_NAME}.
+     * @return Returns the {@link LinuxLatorBootAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
     @Nullable
-    public static TermuxBootAppSharedPreferences build(@NonNull final Context context) {
-        Context termuxBootPackageContext = PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_BOOT_PACKAGE_NAME);
+    public static LinuxLatorBootAppSharedPreferences build(@NonNull final Context context) {
+        Context termuxBootPackageContext = PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_BOOT_PACKAGE_NAME);
         if (termuxBootPackageContext == null)
             return null;
         else
-            return new TermuxBootAppSharedPreferences(termuxBootPackageContext);
+            return new LinuxLatorBootAppSharedPreferences(termuxBootPackageContext);
     }
 
     /**
-     * Get {@link TermuxBootAppSharedPreferences}.
+     * Get {@link LinuxLatorBootAppSharedPreferences}.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the
-     *                {@link TermuxConstants#TERMUX_BOOT_PACKAGE_NAME}.
+     *                {@link LinuxLatorConstants#TERMUX_BOOT_PACKAGE_NAME}.
      * @param exitAppOnError If {@code true} and failed to get package context, then a dialog will
      *                       be shown which when dismissed will exit the app.
-     * @return Returns the {@link TermuxBootAppSharedPreferences}. This will {@code null} if an exception is raised.
+     * @return Returns the {@link LinuxLatorBootAppSharedPreferences}. This will {@code null} if an exception is raised.
      */
-    public static TermuxBootAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
-        Context termuxBootPackageContext = TermuxUtils.getContextForPackageOrExitApp(context, TermuxConstants.TERMUX_BOOT_PACKAGE_NAME, exitAppOnError);
+    public static LinuxLatorBootAppSharedPreferences build(@NonNull final Context context, final boolean exitAppOnError) {
+        Context termuxBootPackageContext = LinuxLatorUtils.getContextForPackageOrExitApp(context, LinuxLatorConstants.TERMUX_BOOT_PACKAGE_NAME, exitAppOnError);
         if (termuxBootPackageContext == null)
             return null;
         else
-            return new TermuxBootAppSharedPreferences(termuxBootPackageContext);
+            return new LinuxLatorBootAppSharedPreferences(termuxBootPackageContext);
     }
 
 

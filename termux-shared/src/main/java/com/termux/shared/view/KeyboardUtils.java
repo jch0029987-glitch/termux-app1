@@ -167,16 +167,16 @@ public class KeyboardUtils {
             return true;
         } else {
             /*
-             * Currently, for this case, soft keyboard will be disabled on Termux app startup and
+             * Currently, for this case, soft keyboard will be disabled on LinuxLator app startup and
              * when switching back from another app. Soft keyboard can be temporarily enabled in
              * show/hide soft keyboard toggle behaviour with keyboard toggle buttons and will continue
              * to work when tapping on terminal view for opening and back button for closing, until
-             * Termux app is switched to another app. After returning back, keyboard will be disabled
+             * LinuxLator app is switched to another app. After returning back, keyboard will be disabled
              * until toggle is pressed again.
              * This may also be helpful for the Lineage OS bug where if "Show soft keyboard" toggle
-             * in "Language and Input" is disabled and Termux is started without a hardware keyboard
+             * in "Language and Input" is disabled and LinuxLator is started without a hardware keyboard
              * in landscape mode, and then the keyboard is connected and phone is rotated to portrait
-             * mode and then keyboard is toggled with Termux keyboard toggle buttons, then a blank
+             * mode and then keyboard is toggled with LinuxLator keyboard toggle buttons, then a blank
              * space is shown in-place of the soft keyboard. Its likely related to
              * WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE which pushes up the view when
              * keyboard is opened instead of the keyboard opening on top of the view (hiding stuff).

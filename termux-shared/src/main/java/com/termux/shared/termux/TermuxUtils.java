@@ -17,14 +17,14 @@ import com.termux.shared.data.DataUtils;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.reflection.ReflectionUtils;
 import com.termux.shared.shell.command.runner.app.AppShell;
-import com.termux.shared.termux.file.TermuxFileUtils;
+import com.termux.shared.termux.file.LinuxLatorFileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.shell.command.ExecutionCommand;
 import com.termux.shared.errors.Error;
 import com.termux.shared.android.PackageUtils;
-import com.termux.shared.termux.TermuxConstants.TERMUX_APP;
-import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
+import com.termux.shared.termux.LinuxLatorConstants.TERMUX_APP;
+import com.termux.shared.termux.shell.command.environment.LinuxLatorShellEnvironment;
 
 import org.apache.commons.io.IOUtils;
 
@@ -34,115 +34,115 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class TermuxUtils {
+public class LinuxLatorUtils {
 
     /** The modes used by {@link #getAppInfoMarkdownString(Context, AppInfoMode, String)}. */
     public enum AppInfoMode {
-        /** Get info for Termux app only. */
+        /** Get info for LinuxLator app only. */
         TERMUX_PACKAGE,
-        /** Get info for Termux app and plugin app if context is of plugin app. */
+        /** Get info for LinuxLator app and plugin app if context is of plugin app. */
         TERMUX_AND_PLUGIN_PACKAGE,
-        /** Get info for Termux app and its plugins listed in {@link TermuxConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
+        /** Get info for LinuxLator app and its plugins listed in {@link LinuxLatorConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
         TERMUX_AND_PLUGIN_PACKAGES,
-        /* Get info for all the Termux app plugins listed in {@link TermuxConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
+        /* Get info for all the LinuxLator app plugins listed in {@link LinuxLatorConstants#TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST}. */
         TERMUX_PLUGIN_PACKAGES,
-        /* Get info for Termux app and the calling package that called a Termux API. */
+        /* Get info for LinuxLator app and the calling package that called a LinuxLator API. */
         TERMUX_AND_CALLING_PACKAGE,
     }
 
-    private static final String LOG_TAG = "TermuxUtils";
+    private static final String LOG_TAG = "LinuxLatorUtils";
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_PACKAGE_NAME} package with the
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} package with the
      * {@link Context#CONTEXT_RESTRICTED} flag.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_PACKAGE_NAME);
+    public static Context getLinuxLatorPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_PACKAGE_NAME} package with the
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} package with the
      * {@link Context#CONTEXT_INCLUDE_CODE} flag.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxPackageContextWithCode(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_PACKAGE_NAME, Context.CONTEXT_INCLUDE_CODE);
+    public static Context getLinuxLatorPackageContextWithCode(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_PACKAGE_NAME, Context.CONTEXT_INCLUDE_CODE);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_API_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_API_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxAPIPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_API_PACKAGE_NAME);
+    public static Context getLinuxLatorAPIPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_API_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_BOOT_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_BOOT_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxBootPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_BOOT_PACKAGE_NAME);
+    public static Context getLinuxLatorBootPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_BOOT_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_FLOAT_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_FLOAT_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxFloatPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_FLOAT_PACKAGE_NAME);
+    public static Context getLinuxLatorFloatPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_FLOAT_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_STYLING_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_STYLING_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxStylingPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_STYLING_PACKAGE_NAME);
+    public static Context getLinuxLatorStylingPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_STYLING_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_TASKER_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_TASKER_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxTaskerPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_TASKER_PACKAGE_NAME);
+    public static Context getLinuxLatorTaskerPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_TASKER_PACKAGE_NAME);
     }
 
     /**
-     * Get the {@link Context} for {@link TermuxConstants#TERMUX_WIDGET_PACKAGE_NAME} package.
+     * Get the {@link Context} for {@link LinuxLatorConstants#TERMUX_WIDGET_PACKAGE_NAME} package.
      *
      * @param context The {@link Context} to use to get the {@link Context} of the package.
      * @return Returns the {@link Context}. This will {@code null} if an exception is raised.
      */
-    public static Context getTermuxWidgetPackageContext(@NonNull Context context) {
-        return PackageUtils.getContextForPackage(context, TermuxConstants.TERMUX_WIDGET_PACKAGE_NAME);
+    public static Context getLinuxLatorWidgetPackageContext(@NonNull Context context) {
+        return PackageUtils.getContextForPackage(context, LinuxLatorConstants.TERMUX_WIDGET_PACKAGE_NAME);
     }
 
     /** Wrapper for {@link PackageUtils#getContextForPackageOrExitApp(Context, String, boolean, String)}. */
     public static Context getContextForPackageOrExitApp(@NonNull Context context, String packageName,
                                                         final boolean exitAppOnError) {
-        return PackageUtils.getContextForPackageOrExitApp(context, packageName, exitAppOnError, TermuxConstants.TERMUX_GITHUB_REPO_URL);
+        return PackageUtils.getContextForPackageOrExitApp(context, packageName, exitAppOnError, LinuxLatorConstants.TERMUX_GITHUB_REPO_URL);
     }
 
     /**
-     * Check if Termux app is installed and enabled. This can be used by external apps that don't
-     * share `sharedUserId` with the Termux app.
+     * Check if LinuxLator app is installed and enabled. This can be used by external apps that don't
+     * share `sharedUserId` with the LinuxLator app.
      *
      * If your third-party app is targeting sdk `30` (android `11`), then it needs to add `com.termux`
      * package to the `queries` element or request `QUERY_ALL_PACKAGES` permission in its
@@ -161,51 +161,51 @@ public class TermuxUtils {
      * }
      *
      * @param context The context for operations.
-     * @return Returns {@code errmsg} if {@link TermuxConstants#TERMUX_PACKAGE_NAME} is not installed
+     * @return Returns {@code errmsg} if {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} is not installed
      * or disabled, otherwise {@code null}.
      */
-    public static String isTermuxAppInstalled(@NonNull final Context context) {
-        return PackageUtils.isAppInstalled(context, TermuxConstants.TERMUX_APP_NAME, TermuxConstants.TERMUX_PACKAGE_NAME);
+    public static String isLinuxLatorAppInstalled(@NonNull final Context context) {
+        return PackageUtils.isAppInstalled(context, LinuxLatorConstants.TERMUX_APP_NAME, LinuxLatorConstants.TERMUX_PACKAGE_NAME);
     }
 
     /**
-     * Check if Termux:API app is installed and enabled. This can be used by external apps that don't
-     * share `sharedUserId` with the Termux:API app.
+     * Check if LinuxLator:API app is installed and enabled. This can be used by external apps that don't
+     * share `sharedUserId` with the LinuxLator:API app.
      *
      * @param context The context for operations.
-     * @return Returns {@code errmsg} if {@link TermuxConstants#TERMUX_API_PACKAGE_NAME} is not installed
+     * @return Returns {@code errmsg} if {@link LinuxLatorConstants#TERMUX_API_PACKAGE_NAME} is not installed
      * or disabled, otherwise {@code null}.
      */
-    public static String isTermuxAPIAppInstalled(@NonNull final Context context) {
-        return PackageUtils.isAppInstalled(context, TermuxConstants.TERMUX_API_APP_NAME, TermuxConstants.TERMUX_API_PACKAGE_NAME);
+    public static String isLinuxLatorAPIAppInstalled(@NonNull final Context context) {
+        return PackageUtils.isAppInstalled(context, LinuxLatorConstants.TERMUX_API_APP_NAME, LinuxLatorConstants.TERMUX_API_PACKAGE_NAME);
     }
 
     /**
-     * Check if Termux app is installed and accessible. This can only be used by apps that share
-     * `sharedUserId` with the Termux app.
+     * Check if LinuxLator app is installed and accessible. This can only be used by apps that share
+     * `sharedUserId` with the LinuxLator app.
      *
      * This is done by checking if first checking if app is installed and enabled and then if
      * {@code currentPackageContext} can be used to get the {@link Context} of the app with
-     * {@link TermuxConstants#TERMUX_PACKAGE_NAME} and then if
-     * {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} exists and has
+     * {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} and then if
+     * {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} exists and has
      * {@link FileUtils#APP_WORKING_DIRECTORY_PERMISSIONS} permissions. The directory will not
      * be automatically created and neither the missing permissions automatically set.
      *
      * @param currentPackageContext The context of current package.
      * @return Returns {@code errmsg} if failed to get termux package {@link Context} or
-     * {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH} is accessible, otherwise {@code null}.
+     * {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH} is accessible, otherwise {@code null}.
      */
-    public static String isTermuxAppAccessible(@NonNull final Context currentPackageContext) {
-        String errmsg = isTermuxAppInstalled(currentPackageContext);
+    public static String isLinuxLatorAppAccessible(@NonNull final Context currentPackageContext) {
+        String errmsg = isLinuxLatorAppInstalled(currentPackageContext);
         if (errmsg == null) {
-            Context termuxPackageContext = TermuxUtils.getTermuxPackageContext(currentPackageContext);
-            // If failed to get Termux app package context
+            Context termuxPackageContext = LinuxLatorUtils.getLinuxLatorPackageContext(currentPackageContext);
+            // If failed to get LinuxLator app package context
             if (termuxPackageContext == null)
                 errmsg = currentPackageContext.getString(R.string.error_termux_app_package_context_not_accessible);
 
             if (errmsg == null) {
-                // If TermuxConstants.TERMUX_PREFIX_DIR_PATH is not a directory or does not have required permissions
-                Error error = TermuxFileUtils.isTermuxPrefixDirectoryAccessible(false, false);
+                // If LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH is not a directory or does not have required permissions
+                Error error = LinuxLatorFileUtils.isLinuxLatorPrefixDirectoryAccessible(false, false);
                 if (error != null)
                     errmsg = currentPackageContext.getString(R.string.error_termux_prefix_dir_path_not_accessible,
                         PackageUtils.getAppNameForPackage(currentPackageContext));
@@ -222,31 +222,31 @@ public class TermuxUtils {
 
 
     /**
-     * Get a field value from the {@link TERMUX_APP#BUILD_CONFIG_CLASS_NAME} class of the Termux app
+     * Get a field value from the {@link TERMUX_APP#BUILD_CONFIG_CLASS_NAME} class of the LinuxLator app
      * APK installed on the device.
-     * This can only be used by apps that share `sharedUserId` with the Termux app.
+     * This can only be used by apps that share `sharedUserId` with the LinuxLator app.
      *
-     * This is a wrapper for {@link #getTermuxAppAPKClassField(Context, String, String)}.
+     * This is a wrapper for {@link #getLinuxLatorAppAPKClassField(Context, String, String)}.
      *
      * @param currentPackageContext The context of current package.
      * @param fieldName The name of the field to get.
      * @return Returns the field value, otherwise {@code null} if an exception was raised or failed
      * to get termux app package context.
      */
-    public static Object getTermuxAppAPKBuildConfigClassField(@NonNull Context currentPackageContext,
+    public static Object getLinuxLatorAppAPKBuildConfigClassField(@NonNull Context currentPackageContext,
                                                               @NonNull String fieldName) {
-        return getTermuxAppAPKClassField(currentPackageContext, TERMUX_APP.BUILD_CONFIG_CLASS_NAME, fieldName);
+        return getLinuxLatorAppAPKClassField(currentPackageContext, TERMUX_APP.BUILD_CONFIG_CLASS_NAME, fieldName);
     }
 
     /**
-     * Get a field value from a class of the Termux app APK installed on the device.
-     * This can only be used by apps that share `sharedUserId` with the Termux app.
+     * Get a field value from a class of the LinuxLator app APK installed on the device.
+     * This can only be used by apps that share `sharedUserId` with the LinuxLator app.
      *
      * This is done by getting first getting termux app package context and then getting in class
      * loader (instead of current app's) that contains termux app class info, and then using that to
      * load the required class and then getting required field from it.
      *
-     * Note that the value returned is from the APK file and not the current value loaded in Termux
+     * Note that the value returned is from the APK file and not the current value loaded in LinuxLator
      * app process, so only default values will be returned.
      *
      * Trying to access {@code null} fields will result in {@link NoSuchFieldException}.
@@ -257,10 +257,10 @@ public class TermuxUtils {
      * @return Returns the field value, otherwise {@code null} if an exception was raised or failed
      * to get termux app package context.
      */
-    public static Object getTermuxAppAPKClassField(@NonNull Context currentPackageContext,
+    public static Object getLinuxLatorAppAPKClassField(@NonNull Context currentPackageContext,
                                                    @NonNull String clazzName, @NonNull String fieldName) {
         try {
-            Context termuxPackageContext = TermuxUtils.getTermuxPackageContextWithCode(currentPackageContext);
+            Context termuxPackageContext = LinuxLatorUtils.getLinuxLatorPackageContextWithCode(currentPackageContext);
             if (termuxPackageContext == null)
                 return null;
 
@@ -274,28 +274,28 @@ public class TermuxUtils {
 
 
 
-    /** Returns {@code true} if {@link Uri} has `package:` scheme for {@link TermuxConstants#TERMUX_PACKAGE_NAME} or its sub plugin package. */
-    public static boolean isUriDataForTermuxOrPluginPackage(@NonNull Uri data) {
-        return data.toString().equals("package:" + TermuxConstants.TERMUX_PACKAGE_NAME) ||
-            data.toString().startsWith("package:" + TermuxConstants.TERMUX_PACKAGE_NAME + ".");
+    /** Returns {@code true} if {@link Uri} has `package:` scheme for {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} or its sub plugin package. */
+    public static boolean isUriDataForLinuxLatorOrPluginPackage(@NonNull Uri data) {
+        return data.toString().equals("package:" + LinuxLatorConstants.TERMUX_PACKAGE_NAME) ||
+            data.toString().startsWith("package:" + LinuxLatorConstants.TERMUX_PACKAGE_NAME + ".");
     }
 
-    /** Returns {@code true} if {@link Uri} has `package:` scheme for {@link TermuxConstants#TERMUX_PACKAGE_NAME} sub plugin package. */
-    public static boolean isUriDataForTermuxPluginPackage(@NonNull Uri data) {
-        return data.toString().startsWith("package:" + TermuxConstants.TERMUX_PACKAGE_NAME + ".");
+    /** Returns {@code true} if {@link Uri} has `package:` scheme for {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} sub plugin package. */
+    public static boolean isUriDataForLinuxLatorPluginPackage(@NonNull Uri data) {
+        return data.toString().startsWith("package:" + LinuxLatorConstants.TERMUX_PACKAGE_NAME + ".");
     }
 
     /**
-     * Send the {@link TermuxConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that Termux
+     * Send the {@link LinuxLatorConstants#BROADCAST_TERMUX_OPENED} broadcast to notify apps that LinuxLator
      * app has been opened.
      *
      * @param context The Context to send the broadcast.
      */
-    public static void sendTermuxOpenedBroadcast(@NonNull Context context) {
-        Intent broadcast = new Intent(TermuxConstants.BROADCAST_TERMUX_OPENED);
+    public static void sendLinuxLatorOpenedBroadcast(@NonNull Context context) {
+        Intent broadcast = new Intent(LinuxLatorConstants.BROADCAST_TERMUX_OPENED);
         List<ResolveInfo> matches = context.getPackageManager().queryBroadcastReceivers(broadcast, 0);
 
-        // send broadcast to registered Termux receivers
+        // send broadcast to registered LinuxLator receivers
         // this technique is needed to work around broadcast changes that Oreo introduced
         for (ResolveInfo info : matches) {
             Intent explicitBroadcast = new Intent(broadcast);
@@ -321,7 +321,7 @@ public class TermuxUtils {
 
     /**
      * Get a markdown {@link String} for the apps info of termux app, its installed plugin apps or
-     * external apps that called a Termux API depending on {@link AppInfoMode} passed.
+     * external apps that called a LinuxLator API depending on {@link AppInfoMode} passed.
      *
      * Also check {@link PackageUtils#isAppInstalled(Context, String, String) if targetting targeting
      * sdk `30` (android `11`) since {@link PackageManager.NameNotFoundException} may be thrown while
@@ -344,21 +344,21 @@ public class TermuxUtils {
                 return getAppInfoMarkdownString(currentPackageContext, true);
 
             case TERMUX_AND_PLUGIN_PACKAGES:
-                appInfo.append(TermuxUtils.getAppInfoMarkdownString(currentPackageContext, false));
+                appInfo.append(LinuxLatorUtils.getAppInfoMarkdownString(currentPackageContext, false));
 
-                String termuxPluginAppsInfo =  TermuxUtils.getTermuxPluginAppsInfoMarkdownString(currentPackageContext);
+                String termuxPluginAppsInfo =  LinuxLatorUtils.getLinuxLatorPluginAppsInfoMarkdownString(currentPackageContext);
                 if (termuxPluginAppsInfo != null)
                     appInfo.append("\n\n").append(termuxPluginAppsInfo);
                 return appInfo.toString();
 
             case TERMUX_PLUGIN_PACKAGES:
-                return TermuxUtils.getTermuxPluginAppsInfoMarkdownString(currentPackageContext);
+                return LinuxLatorUtils.getLinuxLatorPluginAppsInfoMarkdownString(currentPackageContext);
 
             case TERMUX_AND_CALLING_PACKAGE:
-                appInfo.append(TermuxUtils.getAppInfoMarkdownString(currentPackageContext, false));
+                appInfo.append(LinuxLatorUtils.getAppInfoMarkdownString(currentPackageContext, false));
                 if (!DataUtils.isNullOrEmpty(callingPackageName)) {
                     String callingPackageAppInfo = null;
-                    if (TermuxConstants.TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST.contains(callingPackageName)) {
+                    if (LinuxLatorConstants.TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST.contains(callingPackageName)) {
                         Context termuxPluginAppContext = PackageUtils.getContextForPackage(currentPackageContext, callingPackageName);
                         if (termuxPluginAppContext != null)
                             appInfo.append(getAppInfoMarkdownString(termuxPluginAppContext, false));
@@ -391,12 +391,12 @@ public class TermuxUtils {
      * @param currentPackageContext The context of current package.
      * @return Returns the markdown {@link String}.
      */
-    public static String getTermuxPluginAppsInfoMarkdownString(final Context currentPackageContext) {
+    public static String getLinuxLatorPluginAppsInfoMarkdownString(final Context currentPackageContext) {
         if (currentPackageContext == null) return "null";
 
         StringBuilder markdownString = new StringBuilder();
 
-        List<String> termuxPluginAppPackageNamesList = TermuxConstants.TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST;
+        List<String> termuxPluginAppPackageNamesList = LinuxLatorConstants.TERMUX_PLUGIN_APP_PACKAGE_NAMES_LIST;
 
         if (termuxPluginAppPackageNamesList != null) {
             for (int i = 0; i < termuxPluginAppPackageNamesList.size(); i++) {
@@ -419,21 +419,21 @@ public class TermuxUtils {
 
     /**
      * Get a markdown {@link String} for the app info. If the {@code context} passed is different
-     * from the {@link TermuxConstants#TERMUX_PACKAGE_NAME} package context, then this function
+     * from the {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} package context, then this function
      * must have been called by a different package like a plugin, so we return info for both packages
-     * if {@code returnTermuxPackageInfoToo} is {@code true}.
+     * if {@code returnLinuxLatorPackageInfoToo} is {@code true}.
      *
      * @param currentPackageContext The context of current package.
-     * @param returnTermuxPackageInfoToo If set to {@code true}, then will return info of the
-     * {@link TermuxConstants#TERMUX_PACKAGE_NAME} package as well if its different from current package.
+     * @param returnLinuxLatorPackageInfoToo If set to {@code true}, then will return info of the
+     * {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME} package as well if its different from current package.
      * @return Returns the markdown {@link String}.
      */
-    public static String getAppInfoMarkdownString(final Context currentPackageContext, final boolean returnTermuxPackageInfoToo) {
+    public static String getAppInfoMarkdownString(final Context currentPackageContext, final boolean returnLinuxLatorPackageInfoToo) {
         if (currentPackageContext == null) return "null";
 
         StringBuilder markdownString = new StringBuilder();
 
-        Context termuxPackageContext = getTermuxPackageContext(currentPackageContext);
+        Context termuxPackageContext = getLinuxLatorPackageContext(currentPackageContext);
 
         String termuxPackageName = null;
         String termuxAppName = null;
@@ -445,17 +445,17 @@ public class TermuxUtils {
         String currentPackageName = PackageUtils.getPackageNameForPackage(currentPackageContext);
         String currentAppName = PackageUtils.getAppNameForPackage(currentPackageContext);
 
-        boolean isTermuxPackage = (termuxPackageName != null && termuxPackageName.equals(currentPackageName));
+        boolean isLinuxLatorPackage = (termuxPackageName != null && termuxPackageName.equals(currentPackageName));
 
 
-        if (returnTermuxPackageInfoToo && !isTermuxPackage)
+        if (returnLinuxLatorPackageInfoToo && !isLinuxLatorPackage)
             markdownString.append("## ").append(currentAppName).append(" App Info (Current)\n");
         else
             markdownString.append("## ").append(currentAppName).append(" App Info\n");
         markdownString.append(getAppInfoMarkdownStringInner(currentPackageContext));
         markdownString.append("\n##\n");
 
-        if (returnTermuxPackageInfoToo && termuxPackageContext != null && !isTermuxPackage) {
+        if (returnLinuxLatorPackageInfoToo && termuxPackageContext != null && !isLinuxLatorPackage) {
             markdownString.append("\n\n## ").append(termuxAppName).append(" App Info\n");
             markdownString.append(getAppInfoMarkdownStringInner(termuxPackageContext));
             markdownString.append("\n##\n");
@@ -476,15 +476,15 @@ public class TermuxUtils {
 
         markdownString.append((AndroidUtils.getAppInfoMarkdownString(context)));
 
-        if (context.getPackageName().equals(TermuxConstants.TERMUX_PACKAGE_NAME)) {
-            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_MANAGER", TermuxBootstrap.TERMUX_APP_PACKAGE_MANAGER);
-            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_VARIANT", TermuxBootstrap.TERMUX_APP_PACKAGE_VARIANT);
+        if (context.getPackageName().equals(LinuxLatorConstants.TERMUX_PACKAGE_NAME)) {
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_MANAGER", LinuxLatorBootstrap.TERMUX_APP_PACKAGE_MANAGER);
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_APP_PACKAGE_VARIANT", LinuxLatorBootstrap.TERMUX_APP_PACKAGE_VARIANT);
         }
 
         Error error;
-        error = TermuxFileUtils.isTermuxFilesDirectoryAccessible(context, true, true);
+        error = LinuxLatorFileUtils.isLinuxLatorFilesDirectoryAccessible(context, true, true);
         if (error != null) {
-            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_FILES_DIR", TermuxConstants.TERMUX_FILES_DIR_PATH);
+            AndroidUtils.appendPropertyToMarkdown(markdownString, "TERMUX_FILES_DIR", LinuxLatorConstants.TERMUX_FILES_DIR_PATH);
             AndroidUtils.appendPropertyToMarkdown(markdownString, "IS_TERMUX_FILES_DIR_ACCESSIBLE", "false - " + Error.getMinimalErrorString(error));
         }
 
@@ -510,25 +510,25 @@ public class TermuxUtils {
 
         markdownString.append("## Where To Report An Issue");
 
-        markdownString.append("\n\n").append(context.getString(R.string.msg_report_issue, TermuxConstants.TERMUX_WIKI_URL)).append("\n");
+        markdownString.append("\n\n").append(context.getString(R.string.msg_report_issue, LinuxLatorConstants.TERMUX_WIKI_URL)).append("\n");
 
         markdownString.append("\n\n### Email\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_SUPPORT_EMAIL_URL, TermuxConstants.TERMUX_SUPPORT_EMAIL_MAILTO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_SUPPORT_EMAIL_URL, LinuxLatorConstants.TERMUX_SUPPORT_EMAIL_MAILTO_URL)).append("  ");
 
         markdownString.append("\n\n### Reddit\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_REDDIT_SUBREDDIT, TermuxConstants.TERMUX_REDDIT_SUBREDDIT_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_REDDIT_SUBREDDIT, LinuxLatorConstants.TERMUX_REDDIT_SUBREDDIT_URL)).append("  ");
 
-        markdownString.append("\n\n### GitHub Issues for Termux apps\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_APP_NAME, TermuxConstants.TERMUX_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_API_APP_NAME, TermuxConstants.TERMUX_API_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_BOOT_APP_NAME, TermuxConstants.TERMUX_BOOT_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_FLOAT_APP_NAME, TermuxConstants.TERMUX_FLOAT_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_STYLING_APP_NAME, TermuxConstants.TERMUX_STYLING_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_TASKER_APP_NAME, TermuxConstants.TERMUX_TASKER_GITHUB_ISSUES_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_WIDGET_APP_NAME, TermuxConstants.TERMUX_WIDGET_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n\n### GitHub Issues for LinuxLator apps\n");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_APP_NAME, LinuxLatorConstants.TERMUX_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_API_APP_NAME, LinuxLatorConstants.TERMUX_API_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_BOOT_APP_NAME, LinuxLatorConstants.TERMUX_BOOT_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_FLOAT_APP_NAME, LinuxLatorConstants.TERMUX_FLOAT_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_STYLING_APP_NAME, LinuxLatorConstants.TERMUX_STYLING_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_TASKER_APP_NAME, LinuxLatorConstants.TERMUX_TASKER_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_WIDGET_APP_NAME, LinuxLatorConstants.TERMUX_WIDGET_GITHUB_ISSUES_REPO_URL)).append("  ");
 
-        markdownString.append("\n\n### GitHub Issues for Termux packages\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, TermuxConstants.TERMUX_PACKAGES_GITHUB_ISSUES_REPO_URL)).append("  ");
+        markdownString.append("\n\n### GitHub Issues for LinuxLator packages\n");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_ISSUES_REPO_URL)).append("  ");
 
         markdownString.append("\n##\n");
 
@@ -549,25 +549,25 @@ public class TermuxUtils {
         markdownString.append("## Important Links");
 
         markdownString.append("\n\n### GitHub\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_APP_NAME, TermuxConstants.TERMUX_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_API_APP_NAME, TermuxConstants.TERMUX_API_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_BOOT_APP_NAME, TermuxConstants.TERMUX_BOOT_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_FLOAT_APP_NAME, TermuxConstants.TERMUX_FLOAT_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_STYLING_APP_NAME, TermuxConstants.TERMUX_STYLING_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_TASKER_APP_NAME, TermuxConstants.TERMUX_TASKER_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_WIDGET_APP_NAME, TermuxConstants.TERMUX_WIDGET_GITHUB_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, TermuxConstants.TERMUX_PACKAGES_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_APP_NAME, LinuxLatorConstants.TERMUX_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_API_APP_NAME, LinuxLatorConstants.TERMUX_API_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_BOOT_APP_NAME, LinuxLatorConstants.TERMUX_BOOT_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_FLOAT_APP_NAME, LinuxLatorConstants.TERMUX_FLOAT_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_STYLING_APP_NAME, LinuxLatorConstants.TERMUX_STYLING_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_TASKER_APP_NAME, LinuxLatorConstants.TERMUX_TASKER_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_WIDGET_APP_NAME, LinuxLatorConstants.TERMUX_WIDGET_GITHUB_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_REPO_URL)).append("  ");
 
         markdownString.append("\n\n### Email\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_SUPPORT_EMAIL_URL, TermuxConstants.TERMUX_SUPPORT_EMAIL_MAILTO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_SUPPORT_EMAIL_URL, LinuxLatorConstants.TERMUX_SUPPORT_EMAIL_MAILTO_URL)).append("  ");
 
         markdownString.append("\n\n### Reddit\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_REDDIT_SUBREDDIT, TermuxConstants.TERMUX_REDDIT_SUBREDDIT_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_REDDIT_SUBREDDIT, LinuxLatorConstants.TERMUX_REDDIT_SUBREDDIT_URL)).append("  ");
 
         markdownString.append("\n\n### Wiki\n");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_WIKI, TermuxConstants.TERMUX_WIKI_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_APP_NAME, TermuxConstants.TERMUX_GITHUB_WIKI_REPO_URL)).append("  ");
-        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(TermuxConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, TermuxConstants.TERMUX_PACKAGES_GITHUB_WIKI_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_WIKI, LinuxLatorConstants.TERMUX_WIKI_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_APP_NAME, LinuxLatorConstants.TERMUX_GITHUB_WIKI_REPO_URL)).append("  ");
+        markdownString.append("\n").append(MarkdownUtils.getLinkMarkdownString(LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_REPO_NAME, LinuxLatorConstants.TERMUX_PACKAGES_GITHUB_WIKI_REPO_URL)).append("  ");
 
         markdownString.append("\n##\n");
 
@@ -602,14 +602,14 @@ public class TermuxUtils {
             return null;
         }
 
-        aptInfoScript = aptInfoScript.replaceAll(Pattern.quote("@TERMUX_PREFIX@"), TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+        aptInfoScript = aptInfoScript.replaceAll(Pattern.quote("@TERMUX_PREFIX@"), LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH);
 
         ExecutionCommand executionCommand = new ExecutionCommand(-1,
-            TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript,
+            LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript,
             null, ExecutionCommand.Runner.APP_SHELL.getName(), false);
         executionCommand.commandLabel = "APT Info Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
-        AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironment(), null, true);
+        AppShell appShell = AppShell.execute(context, executionCommand, null, new LinuxLatorShellEnvironment(), null, true);
         if (appShell == null || !executionCommand.isSuccessful() || executionCommand.resultData.exitCode != 0) {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
@@ -620,7 +620,7 @@ public class TermuxUtils {
 
         StringBuilder markdownString = new StringBuilder();
 
-        markdownString.append("## ").append(TermuxConstants.TERMUX_APP_NAME).append(" APT Info\n\n");
+        markdownString.append("## ").append(LinuxLatorConstants.TERMUX_APP_NAME).append(" APT Info\n\n");
         markdownString.append(executionCommand.resultData.stdout.toString());
         markdownString.append("\n##\n");
 
@@ -633,8 +633,8 @@ public class TermuxUtils {
      * @param context The context for operations.
      * @return Returns the markdown {@link String}.
      */
-    public static String getTermuxDebugMarkdownString(@NonNull final Context context) {
-        String statInfo = TermuxFileUtils.getTermuxFilesStatMarkdownString(context);
+    public static String getLinuxLatorDebugMarkdownString(@NonNull final Context context) {
+        String statInfo = LinuxLatorFileUtils.getLinuxLatorFilesStatMarkdownString(context);
         String logcatInfo = getLogcatDumpMarkdownString(context);
 
         if (statInfo != null && logcatInfo != null)
@@ -668,7 +668,7 @@ public class TermuxUtils {
             null, logcatScript + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
         executionCommand.commandLabel = "Logcat dump command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
-        AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironment(), null, true);
+        AppShell appShell = AppShell.execute(context, executionCommand, null, new LinuxLatorShellEnvironment(), null, true);
         if (appShell == null || !executionCommand.isSuccessful()) {
             Logger.logErrorExtended(LOG_TAG, executionCommand.toString());
             return null;
@@ -702,14 +702,14 @@ public class TermuxUtils {
         if (signingCertificateSHA256Digest == null) return "null";
 
         switch (signingCertificateSHA256Digest.toUpperCase()) {
-            case TermuxConstants.APK_RELEASE_FDROID_SIGNING_CERTIFICATE_SHA256_DIGEST:
-                return TermuxConstants.APK_RELEASE_FDROID;
-            case TermuxConstants.APK_RELEASE_GITHUB_SIGNING_CERTIFICATE_SHA256_DIGEST:
-                return TermuxConstants.APK_RELEASE_GITHUB;
-            case TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST:
-                return TermuxConstants.APK_RELEASE_GOOGLE_PLAYSTORE;
-            case TermuxConstants.APK_RELEASE_TERMUX_DEVS_SIGNING_CERTIFICATE_SHA256_DIGEST:
-                return TermuxConstants.APK_RELEASE_TERMUX_DEVS;
+            case LinuxLatorConstants.APK_RELEASE_FDROID_SIGNING_CERTIFICATE_SHA256_DIGEST:
+                return LinuxLatorConstants.APK_RELEASE_FDROID;
+            case LinuxLatorConstants.APK_RELEASE_GITHUB_SIGNING_CERTIFICATE_SHA256_DIGEST:
+                return LinuxLatorConstants.APK_RELEASE_GITHUB;
+            case LinuxLatorConstants.APK_RELEASE_GOOGLE_PLAYSTORE_SIGNING_CERTIFICATE_SHA256_DIGEST:
+                return LinuxLatorConstants.APK_RELEASE_GOOGLE_PLAYSTORE;
+            case LinuxLatorConstants.APK_RELEASE_TERMUX_DEVS_SIGNING_CERTIFICATE_SHA256_DIGEST:
+                return LinuxLatorConstants.APK_RELEASE_TERMUX_DEVS;
             default:
                 return "Unknown";
         }
@@ -717,14 +717,14 @@ public class TermuxUtils {
 
 
     /**
-     * Get a process id of the main app process of the {@link TermuxConstants#TERMUX_PACKAGE_NAME}
+     * Get a process id of the main app process of the {@link LinuxLatorConstants#TERMUX_PACKAGE_NAME}
      * package.
      *
      * @param context The context for operations.
      * @return Returns the process if found and running, otherwise {@code null}.
      */
-    public static String getTermuxAppPID(final Context context) {
-        return PackageUtils.getPackagePID(context, TermuxConstants.TERMUX_PACKAGE_NAME);
+    public static String getLinuxLatorAppPID(final Context context) {
+        return PackageUtils.getPackagePID(context, LinuxLatorConstants.TERMUX_PACKAGE_NAME);
     }
 
 }

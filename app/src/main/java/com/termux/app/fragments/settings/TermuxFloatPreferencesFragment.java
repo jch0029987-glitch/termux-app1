@@ -9,10 +9,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxFloatAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.LinuxLatorFloatAppSharedPreferences;
 
 @Keep
-public class TermuxFloatPreferencesFragment extends PreferenceFragmentCompat {
+public class LinuxLatorFloatPreferencesFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -20,28 +20,28 @@ public class TermuxFloatPreferencesFragment extends PreferenceFragmentCompat {
         if (context == null) return;
 
         PreferenceManager preferenceManager = getPreferenceManager();
-        preferenceManager.setPreferenceDataStore(TermuxFloatPreferencesDataStore.getInstance(context));
+        preferenceManager.setPreferenceDataStore(LinuxLatorFloatPreferencesDataStore.getInstance(context));
 
         setPreferencesFromResource(R.xml.termux_float_preferences, rootKey);
     }
 
 }
 
-class TermuxFloatPreferencesDataStore extends PreferenceDataStore {
+class LinuxLatorFloatPreferencesDataStore extends PreferenceDataStore {
 
     private final Context mContext;
-    private final TermuxFloatAppSharedPreferences mPreferences;
+    private final LinuxLatorFloatAppSharedPreferences mPreferences;
 
-    private static TermuxFloatPreferencesDataStore mInstance;
+    private static LinuxLatorFloatPreferencesDataStore mInstance;
 
-    private TermuxFloatPreferencesDataStore(Context context) {
+    private LinuxLatorFloatPreferencesDataStore(Context context) {
         mContext = context;
-        mPreferences = TermuxFloatAppSharedPreferences.build(context, true);
+        mPreferences = LinuxLatorFloatAppSharedPreferences.build(context, true);
     }
 
-    public static synchronized TermuxFloatPreferencesDataStore getInstance(Context context) {
+    public static synchronized LinuxLatorFloatPreferencesDataStore getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new TermuxFloatPreferencesDataStore(context);
+            mInstance = new LinuxLatorFloatPreferencesDataStore(context);
         }
         return mInstance;
     }

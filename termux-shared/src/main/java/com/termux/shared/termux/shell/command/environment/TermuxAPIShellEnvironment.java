@@ -8,28 +8,28 @@ import androidx.annotation.Nullable;
 
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.shell.command.environment.ShellEnvironmentUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxUtils;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
 
 import java.util.HashMap;
 
 /**
- * Environment for {@link TermuxConstants#TERMUX_API_PACKAGE_NAME} app.
+ * Environment for {@link LinuxLatorConstants#TERMUX_API_PACKAGE_NAME} app.
  */
-public class TermuxAPIShellEnvironment {
+public class LinuxLatorAPIShellEnvironment {
 
-    /** Environment variable prefix for the Termux:API app. */
-    public static final String TERMUX_API_APP_ENV_PREFIX = TermuxConstants.TERMUX_ENV_PREFIX_ROOT + "_API_APP__";
+    /** Environment variable prefix for the LinuxLator:API app. */
+    public static final String TERMUX_API_APP_ENV_PREFIX = LinuxLatorConstants.TERMUX_ENV_PREFIX_ROOT + "_API_APP__";
 
-    /** Environment variable for the Termux:API app version. */
+    /** Environment variable for the LinuxLator:API app version. */
     public static final String ENV_TERMUX_API_APP__VERSION_NAME = TERMUX_API_APP_ENV_PREFIX + "VERSION_NAME";
 
-    /** Get shell environment for Termux:API app. */
+    /** Get shell environment for LinuxLator:API app. */
     @Nullable
     public static HashMap<String, String> getEnvironment(@NonNull Context currentPackageContext) {
-        if (TermuxUtils.isTermuxAPIAppInstalled(currentPackageContext) != null) return null;
+        if (LinuxLatorUtils.isLinuxLatorAPIAppInstalled(currentPackageContext) != null) return null;
 
-        String packageName = TermuxConstants.TERMUX_API_PACKAGE_NAME;
+        String packageName = LinuxLatorConstants.TERMUX_API_PACKAGE_NAME;
         PackageInfo packageInfo = PackageUtils.getPackageInfoForPackage(currentPackageContext, packageName);
         if (packageInfo == null) return null;
 

@@ -12,16 +12,16 @@ import android.view.WindowManager;
 
 import com.termux.R;
 import com.termux.shared.file.FileUtils;
-import com.termux.shared.termux.crash.TermuxCrashUtils;
-import com.termux.shared.termux.file.TermuxFileUtils;
+import com.termux.shared.termux.crash.LinuxLatorCrashUtils;
+import com.termux.shared.termux.file.LinuxLatorFileUtils;
 import com.termux.shared.interact.MessageDialogUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.errors.Error;
 import com.termux.shared.android.PackageUtils;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.shell.command.environment.TermuxShellEnvironment;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.LinuxLatorUtils;
+import com.termux.shared.termux.shell.command.environment.LinuxLatorShellEnvironment;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR;
-import static com.termux.shared.termux.TermuxConstants.TERMUX_PREFIX_DIR_PATH;
-import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR;
-import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR_PATH;
+import static com.termux.shared.termux.LinuxLatorConstants.TERMUX_PREFIX_DIR;
+import static com.termux.shared.termux.LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH;
+import static com.termux.shared.termux.LinuxLatorConstants.TERMUX_STAGING_PREFIX_DIR;
+import static com.termux.shared.termux.LinuxLatorConstants.TERMUX_STAGING_PREFIX_DIR_PATH;
 
 /**
- * Install the Termux bootstrap packages if necessary by following the below steps:
+ * Install the LinuxLator bootstrap packages if necessary by following the below steps:
  * <p/>
  * (1) If $PREFIX already exist, assume that it is correct and be done. Note that this relies on that we do not create a
  * broken $PREFIX directory below.
@@ -57,10 +57,10 @@ import static com.termux.shared.termux.TermuxConstants.TERMUX_STAGING_PREFIX_DIR
  * <p/>
  * (5.2) For every other zip entry, extract it into $STAGING_PREFIX and set execute permissions if necessary.
  */
-final class TermuxInstaller {
+final class LinuxLatorInstaller {
         runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
 
-    private static final String LOG_TAG = "TermuxInstaller";
+    private static final String LOG_TAG = "LinuxLatorInstaller";
         runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
 
     /** Performs bootstrap setup if necessary. */
@@ -70,10 +70,10 @@ final class TermuxInstaller {
 
         // This will also call Context.getFilesDir(), which should ensure that termux files directory
         // is created if it does not already exist
-        filesDirectoryAccessibleError = TermuxFileUtils.isTermuxFilesDirectoryAccessible(activity, true, true);
+        filesDirectoryAccessibleError = LinuxLatorFileUtils.isLinuxLatorFilesDirectoryAccessible(activity, true, true);
         boolean isFilesDirectoryAccessible = filesDirectoryAccessibleError == null;
 
-        // Termux can only be run as the primary user (device owner) since only that
+        // LinuxLator can only be run as the primary user (device owner) since only that
         // account has the expected file system paths. Verify that:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !PackageUtils.isCurrentUserThePrimaryUser(activity)) {
             bootstrapErrorMessage = activity.getString(R.string.bootstrap_error_not_primary_user_message,
@@ -91,7 +91,7 @@ final class TermuxInstaller {
             bootstrapErrorMessage = Error.getMinimalErrorString(filesDirectoryAccessibleError);
             //noinspection SdCardPath
             if (PackageUtils.isAppInstalledOnExternalStorage(activity) &&
-                !TermuxConstants.TERMUX_FILES_DIR_PATH.equals(activity.getFilesDir().getAbsolutePath().replaceAll("^/data/user/0/", "/data/data/"))) {
+                !LinuxLatorConstants.TERMUX_FILES_DIR_PATH.equals(activity.getFilesDir().getAbsolutePath().replaceAll("^/data/user/0/", "/data/data/"))) {
                 bootstrapErrorMessage += "\n\n" + activity.getString(R.string.bootstrap_error_installed_on_portable_sd,
                     MarkdownUtils.getMarkdownCodeForString(TERMUX_PREFIX_DIR_PATH, false));
             }
@@ -106,7 +106,7 @@ final class TermuxInstaller {
 
         // If prefix directory exists, even if its a symlink to a valid directory and symlink is not broken/dangling
         if (FileUtils.directoryFileExists(TERMUX_PREFIX_DIR_PATH, true)) {
-            if (TermuxFileUtils.isTermuxPrefixDirectoryEmpty()) {
+            if (LinuxLatorFileUtils.isLinuxLatorPrefixDirectoryEmpty()) {
                 Logger.logInfo(LOG_TAG, "The termux prefix directory \"" + TERMUX_PREFIX_DIR_PATH + "\" exists but is empty or only contains specific unimportant files.");
             } else {
                 whenDone.run();
@@ -121,7 +121,7 @@ final class TermuxInstaller {
             @Override
             public void run() {
                 try {
-                    Logger.logInfo(LOG_TAG, "Installing " + TermuxConstants.TERMUX_APP_NAME + " bootstrap packages.");
+                    Logger.logInfo(LOG_TAG, "Installing " + LinuxLatorConstants.TERMUX_APP_NAME + " bootstrap packages.");
 
                     Error error;
 
@@ -140,14 +140,14 @@ final class TermuxInstaller {
                     }
 
                     // Create prefix staging directory if it does not already exist and set required permissions
-                    error = TermuxFileUtils.isTermuxPrefixStagingDirectoryAccessible(true, true);
+                    error = LinuxLatorFileUtils.isLinuxLatorPrefixStagingDirectoryAccessible(true, true);
                     if (error != null) {
                         showBootstrapErrorDialog(activity, whenDone, Error.getErrorMarkdownString(error));
                         return;
                     }
 
                     // Create prefix directory if it does not already exist and set required permissions
-                    error = TermuxFileUtils.isTermuxPrefixDirectoryAccessible(true, true);
+                    error = LinuxLatorFileUtils.isLinuxLatorPrefixDirectoryAccessible(true, true);
                     if (error != null) {
                         showBootstrapErrorDialog(activity, whenDone, Error.getErrorMarkdownString(error));
                         return;
@@ -221,7 +221,7 @@ final class TermuxInstaller {
                     Logger.logInfo(LOG_TAG, "Bootstrap packages installed successfully.");
 
                     // Recreate env file since termux prefix was wiped earlier
-                    TermuxShellEnvironment.writeEnvironmentToFile(activity);
+                    LinuxLatorShellEnvironment.writeEnvironmentToFile(activity);
 
                     activity.runOnUiThread(whenDone);
 
@@ -257,7 +257,7 @@ final class TermuxInstaller {
                     .setPositiveButton(R.string.bootstrap_error_try_again, (dialog, which) -> {
                         dialog.dismiss();
                         FileUtils.deleteFile("termux prefix directory", TERMUX_PREFIX_DIR_PATH, true);
-                        TermuxInstaller.setupBootstrapIfNeeded(activity, whenDone);
+                        LinuxLatorInstaller.setupBootstrapIfNeeded(activity, whenDone);
         runCommand("/data/data/com.linuxlator/files/usr/bin/bash", "/data/data/com.linuxlator/files/usr/share/linuxlator_startup.sh");
                     }).show();
             } catch (WindowManager.BadTokenException e1) {
@@ -267,19 +267,19 @@ final class TermuxInstaller {
     }
 
     private static void sendBootstrapCrashReportNotification(Activity activity, String message) {
-        final String title = TermuxConstants.TERMUX_APP_NAME + " Bootstrap Error";
+        final String title = LinuxLatorConstants.TERMUX_APP_NAME + " Bootstrap Error";
 
-        // Add info of all install Termux plugin apps as well since their target sdk or installation
-        // on external/portable sd card can affect Termux app files directory access or exec.
-        TermuxCrashUtils.sendCrashReportNotification(activity, LOG_TAG,
+        // Add info of all install LinuxLator plugin apps as well since their target sdk or installation
+        // on external/portable sd card can affect LinuxLator app files directory access or exec.
+        LinuxLatorCrashUtils.sendCrashReportNotification(activity, LOG_TAG,
             title, null, "## " + title + "\n\n" + message + "\n\n" +
-                TermuxUtils.getTermuxDebugMarkdownString(activity),
-            true, false, TermuxUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES, true);
+                LinuxLatorUtils.getLinuxLatorDebugMarkdownString(activity),
+            true, false, LinuxLatorUtils.AppInfoMode.TERMUX_AND_PLUGIN_PACKAGES, true);
     }
 
     static void setupStorageSymlinks(final Context context) {
         final String LOG_TAG = "termux-storage";
-        final String title = TermuxConstants.TERMUX_APP_NAME + " Setup Storage Error";
+        final String title = LinuxLatorConstants.TERMUX_APP_NAME + " Setup Storage Error";
 
         Logger.logInfo(LOG_TAG, "Setting up storage symlinks.");
 
@@ -287,15 +287,15 @@ final class TermuxInstaller {
             public void run() {
                 try {
                     Error error;
-                    File storageDir = TermuxConstants.TERMUX_STORAGE_HOME_DIR;
+                    File storageDir = LinuxLatorConstants.TERMUX_STORAGE_HOME_DIR;
 
                     error = FileUtils.clearDirectory("~/storage", storageDir.getAbsolutePath());
                     if (error != null) {
                         Logger.logErrorAndShowToast(context, LOG_TAG, error.getMessage());
                         Logger.logErrorExtended(LOG_TAG, "Setup Storage Error\n" + error.toString());
-                        TermuxCrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
+                        LinuxLatorCrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
                             "## " + title + "\n\n" + Error.getErrorMarkdownString(error),
-                            true, false, TermuxUtils.AppInfoMode.TERMUX_PACKAGE, true);
+                            true, false, LinuxLatorUtils.AppInfoMode.TERMUX_PACKAGE, true);
                         return;
                     }
 
@@ -366,9 +366,9 @@ final class TermuxInstaller {
                 } catch (Exception e) {
                     Logger.logErrorAndShowToast(context, LOG_TAG, e.getMessage());
                     Logger.logStackTraceWithMessage(LOG_TAG, "Setup Storage Error: Error setting up link", e);
-                    TermuxCrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
+                    LinuxLatorCrashUtils.sendCrashReportNotification(context, LOG_TAG, title, null,
                         "## " + title + "\n\n" + Logger.getStackTracesMarkdownString(null, Logger.getStackTracesStringArray(e)),
-                        true, false, TermuxUtils.AppInfoMode.TERMUX_PACKAGE, true);
+                        true, false, LinuxLatorUtils.AppInfoMode.TERMUX_PACKAGE, true);
                 }
             }
         }.start();

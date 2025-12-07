@@ -11,83 +11,83 @@ import com.termux.shared.shell.command.ExecutionCommand;
 import com.termux.shared.shell.command.environment.AndroidShellEnvironment;
 import com.termux.shared.shell.command.environment.ShellEnvironmentUtils;
 import com.termux.shared.shell.command.environment.ShellCommandShellEnvironment;
-import com.termux.shared.termux.TermuxBootstrap;
-import com.termux.shared.termux.TermuxConstants;
-import com.termux.shared.termux.shell.TermuxShellUtils;
+import com.termux.shared.termux.LinuxLatorBootstrap;
+import com.termux.shared.termux.LinuxLatorConstants;
+import com.termux.shared.termux.shell.LinuxLatorShellUtils;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
- * Environment for Termux.
+ * Environment for LinuxLator.
  */
-public class TermuxShellEnvironment extends AndroidShellEnvironment {
+public class LinuxLatorShellEnvironment extends AndroidShellEnvironment {
 
-    private static final String LOG_TAG = "TermuxShellEnvironment";
+    private static final String LOG_TAG = "LinuxLatorShellEnvironment";
 
-    /** Environment variable for the termux {@link TermuxConstants#TERMUX_PREFIX_DIR_PATH}. */
+    /** Environment variable for the termux {@link LinuxLatorConstants#TERMUX_PREFIX_DIR_PATH}. */
     public static final String ENV_PREFIX = "PREFIX";
 
-    public TermuxShellEnvironment() {
+    public LinuxLatorShellEnvironment() {
         super();
-        shellCommandShellEnvironment = new TermuxShellCommandShellEnvironment();
+        shellCommandShellEnvironment = new LinuxLatorShellCommandShellEnvironment();
     }
 
 
-    /** Init {@link TermuxShellEnvironment} constants and caches. */
+    /** Init {@link LinuxLatorShellEnvironment} constants and caches. */
     public synchronized static void init(@NonNull Context currentPackageContext) {
-        TermuxAppShellEnvironment.setTermuxAppEnvironment(currentPackageContext);
+        LinuxLatorAppShellEnvironment.setLinuxLatorAppEnvironment(currentPackageContext);
     }
 
-    /** Init {@link TermuxShellEnvironment} constants and caches. */
+    /** Init {@link LinuxLatorShellEnvironment} constants and caches. */
     public synchronized static void writeEnvironmentToFile(@NonNull Context currentPackageContext) {
-        HashMap<String, String> environmentMap = new TermuxShellEnvironment().getEnvironment(currentPackageContext, false);
+        HashMap<String, String> environmentMap = new LinuxLatorShellEnvironment().getEnvironment(currentPackageContext, false);
         String environmentString = ShellEnvironmentUtils.convertEnvironmentToDotEnvFile(environmentMap);
 
         // Write environment string to temp file and then move to final location since otherwise
         // writing may happen while file is being sourced/read
-        Error error = FileUtils.writeTextToFile("termux.env.tmp", TermuxConstants.TERMUX_ENV_TEMP_FILE_PATH,
+        Error error = FileUtils.writeTextToFile("termux.env.tmp", LinuxLatorConstants.TERMUX_ENV_TEMP_FILE_PATH,
             Charset.defaultCharset(), environmentString, false);
         if (error != null) {
             Logger.logErrorExtended(LOG_TAG, error.toString());
             return;
         }
 
-        error = FileUtils.moveRegularFile("termux.env.tmp", TermuxConstants.TERMUX_ENV_TEMP_FILE_PATH, TermuxConstants.TERMUX_ENV_FILE_PATH, true);
+        error = FileUtils.moveRegularFile("termux.env.tmp", LinuxLatorConstants.TERMUX_ENV_TEMP_FILE_PATH, LinuxLatorConstants.TERMUX_ENV_FILE_PATH, true);
         if (error != null) {
             Logger.logErrorExtended(LOG_TAG, error.toString());
         }
     }
 
-    /** Get shell environment for Termux. */
+    /** Get shell environment for LinuxLator. */
     @NonNull
     @Override
     public HashMap<String, String> getEnvironment(@NonNull Context currentPackageContext, boolean isFailSafe) {
 
-        // Termux environment builds upon the Android environment
+        // LinuxLator environment builds upon the Android environment
         HashMap<String, String> environment = super.getEnvironment(currentPackageContext, isFailSafe);
 
-        HashMap<String, String> termuxAppEnvironment = TermuxAppShellEnvironment.getEnvironment(currentPackageContext);
+        HashMap<String, String> termuxAppEnvironment = LinuxLatorAppShellEnvironment.getEnvironment(currentPackageContext);
         if (termuxAppEnvironment != null)
             environment.putAll(termuxAppEnvironment);
 
-        HashMap<String, String> termuxApiAppEnvironment = TermuxAPIShellEnvironment.getEnvironment(currentPackageContext);
+        HashMap<String, String> termuxApiAppEnvironment = LinuxLatorAPIShellEnvironment.getEnvironment(currentPackageContext);
         if (termuxApiAppEnvironment != null)
             environment.putAll(termuxApiAppEnvironment);
 
-        environment.put(ENV_HOME, TermuxConstants.TERMUX_HOME_DIR_PATH);
-        environment.put(ENV_PREFIX, TermuxConstants.TERMUX_PREFIX_DIR_PATH);
+        environment.put(ENV_HOME, LinuxLatorConstants.TERMUX_HOME_DIR_PATH);
+        environment.put(ENV_PREFIX, LinuxLatorConstants.TERMUX_PREFIX_DIR_PATH);
 
         // If failsafe is not enabled, then we keep default PATH and TMPDIR so that system binaries can be used
         if (!isFailSafe) {
-            environment.put(ENV_TMPDIR, TermuxConstants.TERMUX_TMP_PREFIX_DIR_PATH);
-            if (TermuxBootstrap.isAppPackageVariantAPTAndroid5()) {
-                // Termux in android 5/6 era shipped busybox binaries in applets directory
-                environment.put(ENV_PATH, TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + ":" + TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/applets");
-                environment.put(ENV_LD_LIBRARY_PATH, TermuxConstants.TERMUX_LIB_PREFIX_DIR_PATH);
+            environment.put(ENV_TMPDIR, LinuxLatorConstants.TERMUX_TMP_PREFIX_DIR_PATH);
+            if (LinuxLatorBootstrap.isAppPackageVariantAPTAndroid5()) {
+                // LinuxLator in android 5/6 era shipped busybox binaries in applets directory
+                environment.put(ENV_PATH, LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH + ":" + LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/applets");
+                environment.put(ENV_LD_LIBRARY_PATH, LinuxLatorConstants.TERMUX_LIB_PREFIX_DIR_PATH);
             } else {
-                // Termux binaries on Android 7+ rely on DT_RUNPATH, so LD_LIBRARY_PATH should be unset by default
-                environment.put(ENV_PATH, TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH);
+                // LinuxLator binaries on Android 7+ rely on DT_RUNPATH, so LD_LIBRARY_PATH should be unset by default
+                environment.put(ENV_PATH, LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH);
                 environment.remove(ENV_LD_LIBRARY_PATH);
             }
         }
@@ -99,19 +99,19 @@ public class TermuxShellEnvironment extends AndroidShellEnvironment {
     @NonNull
     @Override
     public String getDefaultWorkingDirectoryPath() {
-        return TermuxConstants.TERMUX_HOME_DIR_PATH;
+        return LinuxLatorConstants.TERMUX_HOME_DIR_PATH;
     }
 
     @NonNull
     @Override
     public String getDefaultBinPath() {
-        return TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH;
+        return LinuxLatorConstants.TERMUX_BIN_PREFIX_DIR_PATH;
     }
 
     @NonNull
     @Override
     public String[] setupShellCommandArguments(@NonNull String executable, String[] arguments) {
-        return TermuxShellUtils.setupShellCommandArguments(executable, arguments);
+        return LinuxLatorShellUtils.setupShellCommandArguments(executable, arguments);
     }
 
 }
